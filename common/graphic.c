@@ -237,8 +237,8 @@ void fb_draw_image(int x, int y, fb_image* image, int color)
 	char* src; //不同的图像颜色格式定位不同
 /*---------------------------------------------------------------*/
 
-	int alpha;
-	int ww;
+	// int alpha;
+	// int ww;
 
 	if (image->color_type == FB_COLOR_RGB_8880) /*lab3: jpg*/
 	{
@@ -323,8 +323,36 @@ void fb_draw_border(int x, int y, int w, int h, int color)
 	}
 }
 
+// 文字 左旋or右旋
+static void turn(fb_image* img, TurnDirection dir) {
+	if (dir == NONE) 
+		return;
+	int w = img->pixel_w, h = img->pixel_h;
+	char buf[8192]; // 90 * 90 = 8100
+	memset(buf, '\0', sizeof(buf));
+	for (int x = 0; x < w; x ++) {
+		for (int y = 0; y < h; y ++) {
+			int origin = y * w + x;
+			int nxt = 0;
+			if (dir == LEFT) { 
+				int nxt = (w - x) * h + y;
+				buf[nxt] = img->content[origin]; 
+			}
+			else if (dir == RIGHT) { 
+				nxt = x * h + h - y; 
+				buf[nxt] = img->content[origin];
+			}
+		}
+	}
+	for (int i = 0; i < w * h; i++) {
+		img->content[i] = buf[i];
+	}
+	img->pixel_h = w;
+	img->pixel_w = h;
+}
+
 /** draw a text string **/
-void fb_draw_text(int x, int y, char* text, int font_size, int color)
+void fb_draw_text(int x, int y, char* text, int font_size, int color, TurnDirection dir)
 {
 	fb_image* img;
 	fb_font_info info;
@@ -333,7 +361,9 @@ void fb_draw_text(int x, int y, char* text, int font_size, int color)
 	while (i < len) {
 		img = fb_read_font_image(text + i, font_size, &info);
 		if (img == NULL) break;
-		fb_draw_image(x + info.left, y - info.top, img, color);
+		turn(img, dir); // 文字旋转
+		// fb_draw_image(x + info.left, y - info.top, img, color);
+		fb_draw_image(x - font_size / 2, y - font_size / 2, img, color);
 		fb_free_image(img);
 		x += info.advance_x;
 		i += info.bytes;
@@ -365,6 +395,18 @@ void fb_draw_circle(int x0, int y0, int radius, int color) {
 		if (err > 0) {
 			x -= 1;
 			err -= 2*x + 1;
+		}
+	}
+}
+
+void fb_draw_ring(int x0, int y0, int radius, int color) {
+	int* buf = _begin_draw(x0 - radius, y0 - radius, 2 * radius, 2 * radius);
+	for (int i = 0; i < 2 * radius; i ++) {
+		for (int j = 0; j < 2 * radius; j ++) {
+			int dis = (i - radius) * (i - radius) + (j - radius) * (j - radius);
+			if (dis <= radius * radius && dis >= (radius - 3) * (radius - 3)) {
+				*(buf + (y0 - radius + i) * SCREEN_WIDTH + (x0 - radius + j)) = color;
+			}
 		}
 	}
 }
