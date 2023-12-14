@@ -9,7 +9,10 @@
 #include <cstring>
 #include <fcntl.h>
 #include <unistd.h>
+
+extern "C" {
 #include <common/common.h>
+}
 
 int bluetooth_tty_init(const char* dev)
 {

@@ -24,7 +24,7 @@ class Message
 				pos.x,
 				pos.y);
 		}
-		void Deserialize(Chess* chess, Position& pos)
+		void Deserialize(Chess* chess, Position& pos) const
 		{
 			sscanf(message,
 				"%d %d %d %d %d %d",

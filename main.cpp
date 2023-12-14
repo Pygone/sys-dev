@@ -2,7 +2,11 @@
 // Created by Pygone on 2023/12/14.
 //
 #include <cstdio>
+
+extern "C" {
 #include <common/common.h>
+}
+
 #include <src/bluetooth.h>
 #include <src/message.h>
 
@@ -14,7 +18,7 @@ int main()
 	Message message;
 	bool yourTurn = true;
 	int bluetooth_fd = bluetooth_tty_init("/dev/rfcomm0");
-	if(bluetooth_fd == -1) return 0;
+	if (bluetooth_fd == -1) return 0;
 	task_add_file(bluetooth_fd, bluetooth_tty_event_cb);
 	while (true)
 	{
