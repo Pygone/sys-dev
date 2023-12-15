@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 			if (chessBoard[pre_pos.x][pre_pos.y]->move(pos))
 			{
 				message.Serialize(pre_pos, pos);
-				printChessBoard();
+				printChess();
 			}
 			else
 			{
@@ -62,6 +62,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
+				continue;
 			}
 		}
 		else

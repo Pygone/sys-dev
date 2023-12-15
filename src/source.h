@@ -5,3 +5,4 @@
 extern char buf[1024];
 #include "message.h"
 #include "bluetooth.h"
+#include "show.h"
