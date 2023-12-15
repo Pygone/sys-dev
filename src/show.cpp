@@ -25,6 +25,47 @@ static void draw_upon(int x, int y) {
     fb_draw_bold_line(x + 5, y - 5, x + 5, y - 10, COLOR_grey41);
 }
 
+static void draw_chuhe_and_hanjie() {
+    fb_draw_text(XBaseline + 4 * 60 + 30, 90, "楚", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 30, 150, "河", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 35, 60 + 180 + 10, "H", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 35, 60 + 220 + 10, "U", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 35, 60 + 260 + 10, "S", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 35, 60 + 300 + 10, "T", 40, CHESS_FONT_COLOR, RIGHT);
+    // fb_draw_text(XBaseline + 4 * 60 + 35, 60 + 180 + 10, "HUST", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 30, 450, "漢", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline + 4 * 60 + 30, 510, "界", 40, CHESS_FONT_COLOR, RIGHT);
+}
+
+static int prompt_x = XBaseline + 580 + 15;
+static int prompt_x_len = 150;
+static int prompt_x_st = prompt_x + 95;
+
+static void draw_frames() {
+    fb_draw_rect(XBaseline - 100 - 25, 50, 50, 140, COLOR_Tan3);
+    fb_draw_rect(XBaseline - 100 - 25, 230, 50, 140, COLOR_Tan3);
+    fb_draw_rect(XBaseline - 100 - 25, 410, 50, 140, COLOR_Tan3);
+    fb_draw_text(XBaseline - 100, 90, "取", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline - 100, 150, "消", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline - 100, 270, "确", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline - 100, 330, "定", 40, CHESS_FONT_COLOR, RIGHT);   
+    fb_draw_text(XBaseline - 100, 450, "投", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(XBaseline - 100, 510, "降", 40, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_rect(prompt_x, 20, 150, 560, COLOR_Tan3);
+    fb_draw_text(prompt_x + 130, 35, "消", 30, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(prompt_x + 130, 65, "息", 30, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(prompt_x + 130, 95, "提", 30, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(prompt_x + 130, 125, "示", 30, CHESS_FONT_COLOR, RIGHT);
+    fb_draw_text(prompt_x + 130, 155, "区", 30, CHESS_FONT_COLOR, RIGHT);
+}
+
+void draw_message_prompt(char* msg) {
+    fb_draw_rect(prompt_x, 20, 110, 560, COLOR_Tan3);
+    fb_draw_text(prompt_x_st, 40, msg, 30, CHESS_FONT_COLOR, RIGHT);
+    fb_update();
+}
+
+
 void draw_chessboard() {
     // 绘制背景
     fb_draw_rect(XBaseline - 40, 20, 620, 560, COLOR_Tan3);
@@ -49,7 +90,6 @@ void draw_chessboard() {
     fb_draw_bold_line(XBaseline, 360, XBaseline + 120, 240, COLOR_grey41);
     fb_draw_bold_line(XBaseline + 7 * 60, 240, XBaseline + 9 * 60, 360, COLOR_grey41);
     fb_draw_bold_line(XBaseline + 7 * 60, 360, XBaseline + 9 * 60, 240, COLOR_grey41);
-    // 画楚河汉界
 
     // 画兵线
     for (int i = 3; i <= 6; i += 3) {
@@ -80,6 +120,11 @@ void draw_chessboard() {
     fb_draw_bold_line(XBaseline - 10, 540 + 10, XBaseline + 540 + 10, 540 + 10, COLOR_grey31);
     fb_draw_bold_line(XBaseline - 10, 60 - 10, XBaseline - 10, 540 + 10, COLOR_grey31);
     fb_draw_bold_line(XBaseline + 540 + 10, 60 - 10, XBaseline + 540 + 10, 540 + 10, COLOR_grey31);
+
+    // 绘制其他文字部分
+    draw_chuhe_and_hanjie();
+    draw_frames();
+    return;
 }
 
 char* getCharacters(chessType type_, player play_) {
@@ -147,7 +192,21 @@ void draw_chesspiece(Position pos, chessType type_, player play_) {
     draw_chesspiece(res.first, res.second, type_, play_);
 }
 
+void draw_choose(Position pos, chessType type_, player play_) {
+    std::pair<int, int>res = posConvert(pos);
+    draw_chesspiece(res.first, res.second, type_, play_);
+    fb_draw_ring(res.first, res.second, CHESS_Radius, COLOR_LightSkyBlue);
+    // fb_update();
+}
+
+void draw_landing_point(Position pos) {
+    std::pair<int, int>res = posConvert(pos);
+    fb_draw_filled_circle(res.first, res.second, CHESS_LandingPoint, COLOR_LightSkyBlue);
+    // fb_update();
+}
+
 void printChess() {
+    // TODO: 绘制落点与选择的棋子还没写
 	draw_chessboard();
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 9; j++) {
@@ -158,3 +217,21 @@ void printChess() {
 	}
     fb_update();
 }
+
+
+void mytest() {
+    draw_chessboard();
+    fb_update();
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 9; j++) {
+			if (chessBoard[i][j] != nullptr) {
+				draw_choose(chessBoard[i][j]->pos_, chessBoard[i][j]->getChessType(), chessBoard[i][j]->getChessColor());
+			}
+            else {
+                draw_landing_point({i, j});
+            }
+		}
+	}
+    fb_update();
+}
+

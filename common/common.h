@@ -35,11 +35,17 @@ typedef enum {
 #define COLOR_NavajoWhite1 0xffdead
 #define COLOR_Tan2 0xee9a49	// 棋子底色
 #define COLOR_Tan3 0xcd853f // 棋盘底色
+#define COLOR_DeepSkyBlue 0x00bfff
+#define COLOR_LightSkyBlue 0x87cefa
+
+// 棋局的基本文字颜色
+#define CHESS_FONT_COLOR 0xffffff
 
 // 棋子大小设置
 #define CHESS_Radius 27
 #define CHESS_Ring 22
 #define CHESS_FontSize 30
+#define CHESS_LandingPoint 5
 
 /*======================== task.c ============================*/
 /*所有的时间以毫秒为单位*/

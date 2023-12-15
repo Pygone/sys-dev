@@ -13,4 +13,9 @@ void draw_chesspiece(Position pos, chessType type_, player play_);
 void draw_chesspiece(int x, int y, chessType type_, player play_);
 char* getCharacters(chessType type_, player play_);
 std::pair<int, int> posConvert(Position pos); 
+void draw_choose(Position pos, chessType type_, player play_);
+void draw_landing_point(Position pos);
 void printChess();
+void draw_message_prompt(char* msg);
+
+void mytest();

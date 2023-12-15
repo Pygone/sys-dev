@@ -395,7 +395,10 @@ void fb_draw_text(int x, int y, char* text, int font_size, int color, TurnDirect
 		// fb_draw_image(x + info.left, y - info.top, img, color);
 		fb_draw_image(x - font_size / 2, y - font_size / 2, img, color);
 		fb_free_image(img);
-		x += info.advance_x;
+		if (dir == NONE)
+			x += info.advance_x;
+		else 
+			y += info.advance_x;
 		i += info.bytes;
 	}
 	return;
