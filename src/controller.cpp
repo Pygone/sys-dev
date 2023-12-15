@@ -22,6 +22,7 @@ void Controller::init(player myColor_) {
     yourTurn = (myColor == player::red);
     current_state = playing;
     hasChoose = hasLanding = false;
+    touxiangCnt = 0;
     initMap();
 }
 
@@ -87,12 +88,15 @@ void Controller::do_chess(int touch_x, int touch_y) {
     else {
         if (hasChoose) {
             if ( chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == myColor) { // 更换选中的棋子 & 绘制选中的棋子
+                draw_message_prompt("");
                 printChess();  // 打印棋盘
                 draw_choose(pos, chessBoard[pos.x][pos.y]->getChessType(), chessBoard[pos.x][pos.y]->getChessColor());
                 pre_pos = pos;
+                hasLanding = false;
                 fb_update();
             }
             else { // 记录nxt & 绘制落点(要么为空, 要么是对方的棋子)
+                draw_message_prompt("");
                 printChess();
                 draw_choose(pre_pos, chessBoard[pre_pos.x][pre_pos.y]->getChessType(), chessBoard[pre_pos.x][pre_pos.y]->getChessColor());
                 draw_landing_point(pos);
@@ -103,6 +107,7 @@ void Controller::do_chess(int touch_x, int touch_y) {
         }
         else {
             if (chessBoard[pos.x][pos.y]->getChessColor() == myColor) { // 选中棋子 & 绘制选中的棋子
+                draw_message_prompt("");
                 printChess();
                 draw_choose(pos, chessBoard[pos.x][pos.y]->getChessType(), chessBoard[pos.x][pos.y]->getChessColor());
                 hasChoose = true;
@@ -118,6 +123,7 @@ void Controller::do_chess(int touch_x, int touch_y) {
 
 void Controller::do_quxiao() { // 貌似不需要取消键
     hasChoose = false;
+    hasLanding = false;
     printChess();
     fb_update();
 }
@@ -134,18 +140,35 @@ bool Controller::do_queren() {
         }
         else {
             printChess();
+            draw_message_prompt("");
             fb_update();
             return true;
         } 
     }
     else {
-        draw_message_prompt("Please choose a chess and a landing point!");
+        if (!hasChoose) {
+            draw_message_prompt("Please choose a chess!");
+        }
+        else if (!hasLanding) {
+            draw_message_prompt("No landing point!");
+        }
+        hasChoose = false;
+        hasLanding = false;
         return false;
     }
 }
 
 char* Controller::do_touxiang() {
-    return "touxiang";
+    touxiangCnt ++;
+    if (touxiangCnt == 1) {
+        draw_message_prompt("surrender?");
+        fb_update();
+        return NULL;
+    }
+    else if (touxiangCnt == 2) {
+        current_state = over;
+        return "touxiang";
+    }
 }
 
 char* Controller::do_touch(int touch_x, int touch_y) {
@@ -154,13 +177,16 @@ char* Controller::do_touch(int touch_x, int touch_y) {
         switch (type) {
             case chess:
                 do_chess(touch_x, touch_y);
+                touxiangCnt = 0;
                 break;
             case button:
                 switch (buttonMap[{touch_x, touch_y}]) {
                     case quxiao:
                         do_quxiao();
+                        touxiangCnt = 0;
                         break;
                     case queren: {
+                        touxiangCnt = 0;
                         bool res = do_queren();
                         if (res) { // 成功走子
                             message.Serialize(pre_pos, nxt_pos);

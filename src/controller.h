@@ -47,6 +47,7 @@ class Controller {
         bool hasLanding;
         Position pre_pos;
         Position nxt_pos;
+        int touxiangCnt;
 
         void initMap();
         TouchType getTouchType(int touch_x, int touch_y, Activity state);

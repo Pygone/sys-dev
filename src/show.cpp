@@ -121,6 +121,8 @@ void draw_chessboard() {
     fb_draw_bold_line(XBaseline - 10, 60 - 10, XBaseline - 10, 540 + 10, COLOR_grey31);
     fb_draw_bold_line(XBaseline + 540 + 10, 60 - 10, XBaseline + 540 + 10, 540 + 10, COLOR_grey31);
 
+    // 画楚河汉界
+    draw_chuhe_and_hanjie();
     return;
 }
 
@@ -215,7 +217,6 @@ void printChess() {
 
 void initChess() {
     draw_chessboard(); // 绘制棋盘
-    draw_chuhe_and_hanjie(); // 绘制楚河汉界
     draw_frames(); // 绘制按钮框
     draw_region(); // 绘制提示区
     for (auto & i : chessBoard) {
