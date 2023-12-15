@@ -25,8 +25,8 @@ enum player
 };
 enum class result
 {
-	red_win,
-	black_win,
+	redWin,
+	blackWin,
 	playing
 };
 class Chess

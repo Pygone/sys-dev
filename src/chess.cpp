@@ -6,6 +6,7 @@
 #include "show.h"
 
 #include <cmath>
+#include <cstdio>
 Chess* chessBoard[10][9];
 
 void initChessBoard(player player_)
@@ -48,7 +49,7 @@ void initChessBoard(player player_)
 }
 bool ChessJiang::move(Position pos)
 {
-	if (pos.x < 7 || pos.x > 9 || pos.y < 3 || pos.y > 5) return false;
+	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	chessBoard[pos.x][pos.y] = this;
@@ -58,7 +59,7 @@ bool ChessJiang::move(Position pos)
 }
 bool ChessShi::move(Position pos)
 {
-	if (pos.x < 7 || pos.x > 9 || pos.y < 3 || pos.y > 5) return false;
+	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) != 1 || abs(pos.y - pos_.y) != 1) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	chessBoard[pos.x][pos.y] = this;
@@ -68,7 +69,7 @@ bool ChessShi::move(Position pos)
 }
 bool ChessXiang::move(Position pos)
 {
-	if (pos.x < 5 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
+	if (pos.x > 5 || pos.x < 0 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) != 2 || abs(pos.y - pos_.y) != 2) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	if (chessBoard[(pos.x + pos_.x) / 2][(pos.y + pos_.y) / 2] != nullptr) return false;
@@ -160,16 +161,6 @@ bool ChessBing::move(Position pos)
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	if (player_ == player::red)
-	{
-		if (pos.x < pos_.x) return false;
-		if (pos_.x < 5 && pos.x == pos_.x) return false;
-	}
-	else
-	{
-		if (pos.x > pos_.x) return false;
-		if (pos_.x > 4 && pos.x == pos_.x) return false;
-	}
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
 	pos_ = pos;
@@ -196,9 +187,9 @@ void Chess::setChessColor(player player)
 result checkResult()
 {
 	bool red = false, black = false;
-	for (auto & i : chessBoard)
+	for (auto& i : chessBoard)
 	{
-		for (auto & j : i)
+		for (auto& j : i)
 		{
 			if (j != nullptr && j->getChessType() == chessType::jiang)
 			{
@@ -208,7 +199,7 @@ result checkResult()
 		}
 	}
 	if (red && black) return result::playing;
-	else if (red) return result::red_win;
-	else if (black) return result::black_win;
+	else if (red) return result::redWin;
+	else if (black) return result::blackWin;
 	else return result::playing;
 }

@@ -9,7 +9,7 @@ extern "C" {
     #include "../common/common.h"
 }
 
-extern Chess* chessBoard[10][9];
+
 
 static void draw_below(int x, int y) {
     fb_draw_bold_line(x - 5, y + 5, x - 10, y + 5, COLOR_grey41);
@@ -149,10 +149,10 @@ void draw_chesspiece(Position pos, chessType type_, player play_) {
 
 void printChess() {
 	draw_chessboard();
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 9; j++) {
-			if (chessBoard[i][j] != nullptr) {
-				draw_chesspiece(chessBoard[i][j]->pos_, chessBoard[i][j]->getChessType(), chessBoard[i][j]->getChessColor());
+	for (auto & i : chessBoard) {
+		for (auto & j : i) {
+			if (j != nullptr) {
+				draw_chesspiece(j->pos_, j->getChessType(), j->getChessColor());
 			}
 		}
 	}

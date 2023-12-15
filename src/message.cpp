@@ -27,3 +27,12 @@ char* Message::getMessage() const
 {
 	return message;
 }
+
+Message::Message()
+{
+	message = new char[100];
+}
+Message::~Message()
+{
+	delete[] message;
+}
