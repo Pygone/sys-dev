@@ -138,7 +138,7 @@ bool ChessPao::move(Position pos)
 		{
 			if (chessBoard[pos.x][i] != nullptr) count++;
 		}
-		if (count != 1) return false;
+		if (count > 1) return false;
 	}
 	else
 	{
@@ -149,7 +149,7 @@ bool ChessPao::move(Position pos)
 		{
 			if (chessBoard[i][pos.y] != nullptr) count++;
 		}
-		if (count != 1) return false;
+		if (count > 1) return false;
 	}
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
