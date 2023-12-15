@@ -74,7 +74,7 @@ void task_loop(void); /*进入任务循环, 该函数不返回*/
 /*非阻塞方式读/写文件, 返回实际读/写的字节数*/
 int myRead_nonblock(int fd, void *p, int n);
 int myWrite_nonblock(int fd, void *p, int n);
-
+int read_block(int fd, void *p, int n);
 /*======================== image.c ============================*/
 #define FB_COLOR(r,g,b)	(0xff000000|(r<<16)|(g<<8)|b)
 

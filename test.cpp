@@ -11,7 +11,7 @@ extern Chess* chessBoard[10][9];
 int main() {
     fb_init("/dev/fb0");
     font_init("../font.ttc");
-    initChessBoard();
+    initChessBoard(player::red);
     // printChess();
     mytest();
     draw_message_prompt("hello world");
