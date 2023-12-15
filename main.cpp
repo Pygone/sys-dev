@@ -17,6 +17,7 @@ Controller ctrler;
 
 void touch_event_cb(int fd)
 {
+	printf("your click\n");
 	if (!ctrler.getYourTurn()) return;
 
 	int type, x, y, finger;
@@ -114,8 +115,8 @@ int main(int argc, char* argv[])
 	}
 	fb_init("/dev/fb0");
 	font_init("./font.ttc");
-	bluetooth_fd = bluetooth_tty_init("/dev/rfcomm0");
-	if (bluetooth_fd == -1) return 0;
+	// bluetooth_fd = bluetooth_tty_init("/dev/rfcomm0");
+	// if (bluetooth_fd == -1) return 0;
 	touch_fd = touch_init("/dev/input/event2");
 	if (touch_fd == -1) return 0;
 	player myColor_ = strcmp(argv[1], "red") == 0 ? player::red : player::black;
@@ -123,7 +124,7 @@ int main(int argc, char* argv[])
 	initChessBoard(myColor_);
 	initChess();
 	task_add_file(touch_fd, touch_event_cb);
-	task_add_file(bluetooth_fd, bluetooth_event_cb);
+	// task_add_file(bluetooth_fd, bluetooth_event_cb);
 	task_loop();
 	return 0;
 }

@@ -81,12 +81,12 @@ TouchType Controller::getTouchType(int touch_x, int touch_y, Activity state) {
 
 void Controller::do_chess(int touch_x, int touch_y) {
     Position pos = posMap[{touch_x, touch_y}];
-    if (chessBoard[pos.x][pos.y] == nullptr) {
+    if ( !hasChoose && chessBoard[pos.x][pos.y] == nullptr) {
         draw_message_prompt("No chess here!");
     }
     else {
         if (hasChoose) {
-            if (chessBoard[pos.x][pos.y]->getChessColor() == myColor) { // 更换选中的棋子 & 绘制选中的棋子
+            if ( chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == myColor) { // 更换选中的棋子 & 绘制选中的棋子
                 printChess();  // 打印棋盘
                 draw_choose(pos, chessBoard[pos.x][pos.y]->getChessType(), chessBoard[pos.x][pos.y]->getChessColor());
                 pre_pos = pos;
