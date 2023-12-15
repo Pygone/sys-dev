@@ -12,6 +12,13 @@
 #include <fcntl.h>
 #include <pthread.h>
 
+// 旋转方向
+typedef enum {
+	NONE,
+	LEFT,
+	RIGHT
+}TurnDirection;
+
 /*======================== task.c ============================*/
 /*所有的时间以毫秒为单位*/
 typedef int myTime;
@@ -88,7 +95,9 @@ void fb_draw_line(int sx, int sy, int dx, int dy, int color);
 
 /*lab3*/
 void fb_draw_image(int x, int y, fb_image *image, int color);
-void fb_draw_text(int x, int y, char *text, int font_size, int color);
+void fb_draw_text(int x, int y, char *text, int font_size, int color, TurnDirection dir);
+void fb_draw_circle(int x, int y, int r, int color);
+void fb_draw_ring(int x, int y, int r, int color);
 
 /*=========================== input.c ===============================*/
 /*lab4*/
