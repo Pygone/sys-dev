@@ -9,8 +9,6 @@ extern "C" {
     #include "../common/common.h"
 }
 
-
-
 static void draw_below(int x, int y) {
     fb_draw_bold_line(x - 5, y + 5, x - 10, y + 5, COLOR_grey41);
     fb_draw_bold_line(x + 5, y + 5, x + 10, y + 5, COLOR_grey41);
@@ -51,6 +49,9 @@ static void draw_frames() {
     fb_draw_text(XBaseline - 100, 330, "定", 40, CHESS_FONT_COLOR, RIGHT);   
     fb_draw_text(XBaseline - 100, 450, "投", 40, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(XBaseline - 100, 510, "降", 40, CHESS_FONT_COLOR, RIGHT);
+}
+
+static void draw_region() {
     fb_draw_rect(prompt_x, 20, 150, 560, COLOR_Tan3);
     fb_draw_text(prompt_x + 130, 35, "消", 30, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(prompt_x + 130, 65, "息", 30, CHESS_FONT_COLOR, RIGHT);
@@ -64,7 +65,6 @@ void draw_message_prompt(char* msg) {
     fb_draw_text(prompt_x_st, 40, msg, 30, CHESS_FONT_COLOR, RIGHT);
     fb_update();
 }
-
 
 void draw_chessboard() {
     // 绘制背景
@@ -121,9 +121,6 @@ void draw_chessboard() {
     fb_draw_bold_line(XBaseline - 10, 60 - 10, XBaseline - 10, 540 + 10, COLOR_grey31);
     fb_draw_bold_line(XBaseline + 540 + 10, 60 - 10, XBaseline + 540 + 10, 540 + 10, COLOR_grey31);
 
-    // 绘制其他文字部分
-    draw_chuhe_and_hanjie();
-    draw_frames();
     return;
 }
 
@@ -206,9 +203,22 @@ void draw_landing_point(Position pos) {
 }
 
 void printChess() {
-    // TODO: 绘制落点与选择的棋子还没写
 	draw_chessboard();
 	for (auto & i : chessBoard) {
+		for (auto & j : i) {
+			if (j != nullptr) {
+				draw_chesspiece(j->pos_, j->getChessType(), j->getChessColor());
+			}
+		}
+	}
+}
+
+void initChess() {
+    draw_chessboard(); // 绘制棋盘
+    draw_chuhe_and_hanjie(); // 绘制楚河汉界
+    draw_frames(); // 绘制按钮框
+    draw_region(); // 绘制提示区
+    for (auto & i : chessBoard) {
 		for (auto & j : i) {
 			if (j != nullptr) {
 				draw_chesspiece(j->pos_, j->getChessType(), j->getChessColor());
@@ -218,20 +228,33 @@ void printChess() {
     fb_update();
 }
 
+void draw_win() {
+    fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+    fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 60, "W", 150, COLOR_RED, RIGHT);
+    fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 60 + 100, "in!", 150, COLOR_RED, RIGHT);
+    fb_update();
+}
+
+void draw_lose() {
+    fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+    fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 80, "Lose!", 150, COLOR_RED, RIGHT);
+    fb_update();
+}
 
 void mytest() {
-    draw_chessboard();
-    fb_update();
-	for (int i = 0; i < 10; i++) {
-		for (int j = 0; j < 9; j++) {
-			if (chessBoard[i][j] != nullptr) {
-				draw_choose(chessBoard[i][j]->pos_, chessBoard[i][j]->getChessType(), chessBoard[i][j]->getChessColor());
-			}
-            else {
-                draw_landing_point({i, j});
-            }
-		}
-	}
+    draw_win();
+    // draw_chessboard();
+    // fb_update();
+	// for (int i = 0; i < 10; i++) {
+	// 	for (int j = 0; j < 9; j++) {
+	// 		if (chessBoard[i][j] != nullptr) {
+	// 			draw_choose(chessBoard[i][j]->pos_, chessBoard[i][j]->getChessType(), chessBoard[i][j]->getChessColor());
+	// 		}
+    //         else {
+    //             draw_landing_point({i, j});
+    //         }
+	// 	}
+	// }
     fb_update();
 }
 
