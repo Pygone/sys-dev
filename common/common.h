@@ -19,6 +19,28 @@ typedef enum {
 	RIGHT
 }TurnDirection;
 
+// 颜色库
+#define COLOR_BROWN	0x8b4513
+#define COLOR_WHITE	0xffffff
+#define COLOR_BLACK	0x000000
+#define COLOR_grey31 0x4f4f4f
+#define COLOR_grey41 0x696969
+#define COLOR_Bisque1 0xffe4c4
+#define COLOR_RED	0xff0000
+#define COLOR_Burlywood 0xdeb887
+#define COLOR_PeachPuff 0xffdab9
+#define COLOR_PeachPuff3 0xcdaf95
+#define COLOR_Burlywood3 0xcdaa7d
+#define COLOR_Burlywood4 0x8b7355
+#define COLOR_NavajoWhite1 0xffdead
+#define COLOR_Tan2 0xee9a49	// 棋子底色
+#define COLOR_Tan3 0xcd853f // 棋盘底色
+
+// 棋子大小设置
+#define CHESS_Radius 27
+#define CHESS_Ring 22
+#define CHESS_FontSize 30
+
 /*======================== task.c ============================*/
 /*所有的时间以毫秒为单位*/
 typedef int myTime;
@@ -92,12 +114,14 @@ void fb_draw_pixel(int x, int y, int color);
 void fb_draw_rect(int x, int y, int w, int h, int color);
 void fb_draw_border(int x, int y, int w, int h, int color);
 void fb_draw_line(int sx, int sy, int dx, int dy, int color);
+void fb_draw_bold_line(int sx, int sy, int dx, int dy, int color);
 
 /*lab3*/
 void fb_draw_image(int x, int y, fb_image *image, int color);
 void fb_draw_text(int x, int y, char *text, int font_size, int color, TurnDirection dir);
 void fb_draw_circle(int x, int y, int r, int color);
 void fb_draw_ring(int x, int y, int r, int color);
+void fb_draw_filled_circle(int x, int y, int r, int color);
 
 /*=========================== input.c ===============================*/
 /*lab4*/

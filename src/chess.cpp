@@ -3,6 +3,7 @@
 //
 
 #include "chess.h"
+#include "show.h"
 
 #include <cmath>
 Chess* chessBoard[10][9];

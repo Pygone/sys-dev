@@ -121,5 +121,4 @@ class ChessBing : public Chess
 };
 extern Chess* chessBoard[10][9];
 extern void initChessBoard(player player_);
-extern void printChessBoard(); //TODO print chess board
 extern result checkResult();
