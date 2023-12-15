@@ -46,7 +46,7 @@ bool ChessJiang::move(Position pos)
 {
 	if (pos.x < 7 || pos.x > 9 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
 	pos_ = pos;
@@ -56,7 +56,7 @@ bool ChessShi::move(Position pos)
 {
 	if (pos.x < 7 || pos.x > 9 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) != 1 || abs(pos.y - pos_.y) != 1) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
 	pos_ = pos;
@@ -66,7 +66,7 @@ bool ChessXiang::move(Position pos)
 {
 	if (pos.x < 5 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) != 2 || abs(pos.y - pos_.y) != 2) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	if (chessBoard[(pos.x + pos_.x) / 2][(pos.y + pos_.y) / 2] != nullptr) return false;
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
@@ -77,7 +77,7 @@ bool ChessMa::move(Position pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 3) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	if (abs(pos.x - pos_.x) == 2)
 	{
 		if (chessBoard[(pos.x + pos_.x) / 2][pos_.y] != nullptr) return false;
@@ -95,7 +95,7 @@ bool ChessJu::move(Position pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (pos.x != pos_.x && pos.y != pos_.y) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	if (pos.x == pos_.x)
 	{
 		int min = pos_.y < pos.y ? pos_.y : pos.y;
@@ -123,7 +123,7 @@ bool ChessPao::move(Position pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (pos.x != pos_.x && pos.y != pos_.y) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	if (pos.x == pos_.x)
 	{
 		int min = pos_.y < pos.y ? pos_.y : pos.y;
@@ -155,7 +155,7 @@ bool ChessBing::move(Position pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->player_ == player_) return false;
+	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	if (player_ == player::red)
 	{
 		if (pos.x < pos_.x) return false;
@@ -170,4 +170,21 @@ bool ChessBing::move(Position pos)
 	chessBoard[pos_.x][pos_.y] = nullptr;
 	pos_ = pos;
 	return true;
+}
+
+chessType Chess::getChessType() const
+{
+	return type_;
+}
+void Chess::setChessType(chessType type)
+{
+	type_ = type;
+}
+player Chess::getChessColor() const
+{
+	return player_;
+}
+void Chess::setChessColor(player player)
+{
+	player_ = player;
 }

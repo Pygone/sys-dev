@@ -7,8 +7,7 @@ extern "C" {
 #include <common/common.h>
 }
 
-#include <src/bluetooth.h>
-#include <src/message.h>
+#include <src/source.h>
 
 #include "src/chess.h"
 int main()
@@ -30,15 +29,20 @@ int main()
 			pos.y = y;
 			if (chessBoard[pre_pos.x][pre_pos.y]->move(pos))
 			{
-				message.Serialize(chessBoard[pre_pos.x][pre_pos.y], pos);
+				message.Serialize(pre_pos, pos);
 			}
+			else
+			{
+				printf("Invalid move!\n");
+				continue;
+			}
+			myWrite_nonblock(bluetooth_fd, message.getMessage(), strlen(message.getMessage()));
 			yourTurn = false;
 		}
 		else
 		{
-			scanf("%s", message.message);
-			message.Deserialize(chessBoard[pre_pos.x][pre_pos.y], pos);
-			chessBoard[pre_pos.x][pre_pos.y]->move(pos);
+			myRead_nonblock(bluetooth_fd, message.getMessage(), strlen(message.getMessage()));
+			message.Deserialize();
 			yourTurn = true;
 		}
 	}

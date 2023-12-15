@@ -2,18 +2,17 @@
 // Created by Pygone on 2023/12/14.
 //
 
-#include "bluetooth.h"
-
+#include "src/source.h"
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
-#include <unistd.h>
 
 extern "C" {
 #include <common/common.h>
 }
 
+char buf[1024];
 int bluetooth_tty_init(const char* dev)
 {
 	int fd = open(dev, O_RDWR | O_NOCTTY | O_NONBLOCK); /*非阻塞模式*/
@@ -27,7 +26,7 @@ int bluetooth_tty_init(const char* dev)
 
 void bluetooth_tty_event_cb(int fd)
 {
-	char buf[1024];
+	memset(buf, 0, sizeof(buf));
 	int len = myRead_nonblock(fd, buf, sizeof(buf));
 	if (len > 0)
 	{
