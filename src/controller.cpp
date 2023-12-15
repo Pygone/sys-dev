@@ -179,6 +179,7 @@ char* Controller::do_touch(int touch_x, int touch_y) {
         }
     }
     else {
+        fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
         exit(0); // 进入over模式 按击任意位置退出
     }
     return NULL;
