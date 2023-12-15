@@ -23,6 +23,12 @@ enum player
 	red,
 	black
 };
+enum class result
+{
+	red_win,
+	black_win,
+	playing
+};
 class Chess
 {
 	protected:
@@ -114,5 +120,6 @@ class ChessBing : public Chess
 		= default;
 };
 extern Chess* chessBoard[10][9];
-extern void initChessBoard();
+extern void initChessBoard(player player_);
 extern void printChessBoard(); //TODO print chess board
+extern result checkResult();

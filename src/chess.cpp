@@ -7,40 +7,43 @@
 #include <cmath>
 Chess* chessBoard[10][9];
 
-void initChessBoard()
+void initChessBoard(player player_)
 {
-	chessBoard[0][0] = new ChessJu(player::red, { 0, 0 });
-	chessBoard[0][1] = new ChessMa(player::red, { 0, 1 });
-	chessBoard[0][2] = new ChessXiang(player::red, { 0, 2 });
-	chessBoard[0][3] = new ChessShi(player::red, { 0, 3 });
-	chessBoard[0][4] = new ChessJiang(player::red, { 0, 4 });
-	chessBoard[0][5] = new ChessShi(player::red, { 0, 5 });
-	chessBoard[0][6] = new ChessXiang(player::red, { 0, 6 });
-	chessBoard[0][7] = new ChessMa(player::red, { 0, 7 });
-	chessBoard[0][8] = new ChessJu(player::red, { 0, 8 });
-	chessBoard[2][1] = new ChessPao(player::red, { 2, 1 });
-	chessBoard[2][7] = new ChessPao(player::red, { 2, 7 });
-	chessBoard[3][0] = new ChessBing(player::red, { 3, 0 });
-	chessBoard[3][2] = new ChessBing(player::red, { 3, 2 });
-	chessBoard[3][4] = new ChessBing(player::red, { 3, 4 });
-	chessBoard[3][6] = new ChessBing(player::red, { 3, 6 });
-	chessBoard[3][8] = new ChessBing(player::red, { 3, 8 });
-	chessBoard[9][0] = new ChessJu(player::black, { 9, 0 });
-	chessBoard[9][1] = new ChessMa(player::black, { 9, 1 });
-	chessBoard[9][2] = new ChessXiang(player::black, { 9, 2 });
-	chessBoard[9][3] = new ChessShi(player::black, { 9, 3 });
-	chessBoard[9][4] = new ChessJiang(player::black, { 9, 4 });
-	chessBoard[9][5] = new ChessShi(player::black, { 9, 5 });
-	chessBoard[9][6] = new ChessXiang(player::black, { 9, 6 });
-	chessBoard[9][7] = new ChessMa(player::black, { 9, 7 });
-	chessBoard[9][8] = new ChessJu(player::black, { 9, 8 });
-	chessBoard[7][1] = new ChessPao(player::black, { 7, 1 });
-	chessBoard[7][7] = new ChessPao(player::black, { 7, 7 });
-	chessBoard[6][0] = new ChessBing(player::black, { 6, 0 });
-	chessBoard[6][2] = new ChessBing(player::black, { 6, 2 });
-	chessBoard[6][4] = new ChessBing(player::black, { 6, 4 });
-	chessBoard[6][6] = new ChessBing(player::black, { 6, 6 });
-	chessBoard[6][8] = new ChessBing(player::black, { 6, 8 });
+	player other = player_ == player::red ? player::black : player::red;
+	chessBoard[0][0] = new ChessJu(player_, { 0, 0 });
+	chessBoard[0][1] = new ChessMa(player_, { 0, 1 });
+	chessBoard[0][2] = new ChessXiang(player_, { 0, 2 });
+	chessBoard[0][1] = new ChessMa(player_, { 0, 1 });
+	chessBoard[0][2] = new ChessXiang(player_, { 0, 2 });
+	chessBoard[0][3] = new ChessShi(player_, { 0, 3 });
+	chessBoard[0][4] = new ChessJiang(player_, { 0, 4 });
+	chessBoard[0][5] = new ChessShi(player_, { 0, 5 });
+	chessBoard[0][6] = new ChessXiang(player_, { 0, 6 });
+	chessBoard[0][7] = new ChessMa(player_, { 0, 7 });
+	chessBoard[0][8] = new ChessJu(player_, { 0, 8 });
+	chessBoard[2][1] = new ChessPao(player_, { 2, 1 });
+	chessBoard[2][7] = new ChessPao(player_, { 2, 7 });
+	chessBoard[3][0] = new ChessBing(player_, { 3, 0 });
+	chessBoard[3][2] = new ChessBing(player_, { 3, 2 });
+	chessBoard[3][4] = new ChessBing(player_, { 3, 4 });
+	chessBoard[3][6] = new ChessBing(player_, { 3, 6 });
+	chessBoard[3][8] = new ChessBing(player_, { 3, 8 });
+	chessBoard[9][0] = new ChessJu(other, { 9, 0 });
+	chessBoard[9][1] = new ChessMa(other, { 9, 1 });
+	chessBoard[9][2] = new ChessXiang(other, { 9, 2 });
+	chessBoard[9][3] = new ChessShi(other, { 9, 3 });
+	chessBoard[9][4] = new ChessJiang(other, { 9, 4 });
+	chessBoard[9][5] = new ChessShi(other, { 9, 5 });
+	chessBoard[9][6] = new ChessXiang(other, { 9, 6 });
+	chessBoard[9][7] = new ChessMa(other, { 9, 7 });
+	chessBoard[9][8] = new ChessJu(other, { 9, 8 });
+	chessBoard[7][1] = new ChessPao(other, { 7, 1 });
+	chessBoard[7][7] = new ChessPao(other, { 7, 7 });
+	chessBoard[6][0] = new ChessBing(other, { 6, 0 });
+	chessBoard[6][2] = new ChessBing(other, { 6, 2 });
+	chessBoard[6][4] = new ChessBing(other, { 6, 4 });
+	chessBoard[6][6] = new ChessBing(other, { 6, 6 });
+	chessBoard[6][8] = new ChessBing(other, { 6, 8 });
 }
 bool ChessJiang::move(Position pos)
 {
@@ -187,4 +190,24 @@ player Chess::getChessColor() const
 void Chess::setChessColor(player player)
 {
 	player_ = player;
+}
+
+result checkResult()
+{
+	bool red = false, black = false;
+	for (auto & i : chessBoard)
+	{
+		for (auto & j : i)
+		{
+			if (j != nullptr && j->getChessType() == chessType::jiang)
+			{
+				if (j->getChessColor() == player::red) red = true;
+				else black = true;
+			}
+		}
+	}
+	if (red && black) return result::playing;
+	else if (red) return result::red_win;
+	else if (black) return result::black_win;
+	else return result::playing;
 }
