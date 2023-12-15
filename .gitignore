@@ -1,7 +1,0 @@
-/bin
-/build
-/lib
-.gitignore
-/.vscode
-scp.sh
-test.cpp
