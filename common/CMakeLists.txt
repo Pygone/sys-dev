@@ -1,15 +1,7 @@
 
-add_library(common STATIC
-        graphic.c
-        image.c
-        task.c
-        touch.c
-)
 
-target_link_libraries(common
-        jpeg
-        png
-        freetype
-        z
-        asound
+file(GLOB SOURCES "*.c" )
+set(common_sources ${SOURCES} PARENT_SCOPE)
+add_library(common
+        ${SOURCES}
 )

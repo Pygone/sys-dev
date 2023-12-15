@@ -152,7 +152,7 @@ void printChess() {
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 9; j++) {
 			if (chessBoard[i][j] != nullptr) {
-				draw_chesspiece(chessBoard[i][j]->pos_, chessBoard[i][j]->type_, chessBoard[i][j]->player_);
+				draw_chesspiece(chessBoard[i][j]->pos_, chessBoard[i][j]->getChessType(), chessBoard[i][j]->getChessColor());
 			}
 		}
 	}

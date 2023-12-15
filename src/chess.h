@@ -8,7 +8,7 @@ struct Position
 	int x;
 	int y;
 };
-enum class chessType
+enum chessType
 {
 	jiang,
 	shi,
@@ -18,25 +18,30 @@ enum class chessType
 	pao,
 	bing
 };
-enum class player
+enum player
 {
 	red,
 	black
 };
 class Chess
 {
-	public:
+	protected:
 		player player_;
-		Position pos_{};
+
 		chessType type_;
 
+	public:
+		Position pos_{};
 		Chess(player player, chessType type, Position pos): player_(player), type_(type), pos_(pos)
-        {
-        }
+		{
+		}
 		virtual bool move(Position pos) = 0;
 		virtual ~Chess()
-        = default;
-
+		= default;
+		chessType getChessType() const;
+		void setChessType(chessType type);
+		player getChessColor() const;
+		void setChessColor(player player);
 };
 class ChessJiang : public Chess
 {
@@ -110,4 +115,3 @@ class ChessBing : public Chess
 };
 extern Chess* chessBoard[10][9];
 extern void initChessBoard();
-// extern void printChessBoard(); //TODO print chess board
