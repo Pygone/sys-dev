@@ -3,6 +3,7 @@
 //
 
 #include "chess.h"
+#include "show.h"
 
 #include <cmath>
 Chess* chessBoard[10][9];
@@ -171,3 +172,4 @@ bool ChessBing::move(Position pos)
 	pos_ = pos;
 	return true;
 }
+

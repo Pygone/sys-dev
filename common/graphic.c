@@ -203,6 +203,36 @@ void fb_draw_line(int x1, int y1, int x2, int y2, int color)
 	}
 }
 
+void fb_draw_bold_line(int x1, int y1, int x2, int y2, int color) {
+	if (x1 == x2) { // 斜率不存在
+		fb_draw_line(x1 - 1, y1, x2 - 1, y2, color);
+		fb_draw_line(x1, y1, x2, y2, color);
+		fb_draw_line(x1 + 1, y1, x2 + 1, y2, color);
+	}
+	else if (y1 == y2) {
+		// 斜率为0
+		fb_draw_line(x1, y1 - 1, x2, y2 - 1, color);
+		fb_draw_line(x1, y1, x2, y2, color);
+		fb_draw_line(x1, y1 + 1, x2, y2 + 1, color);
+	}
+	else if (((x2 - x1) * (y2 - y1)) > 0) {
+		// 135°
+		fb_draw_line(x1, y1, x2, y2, color);
+		fb_draw_line(x1 + 1, y1, x2, y2 - 1, color);
+		fb_draw_line(x1, y1 + 1, x2 - 1, y2, color);	
+		fb_draw_line(x1 + 2, y1, x2, y2 - 2, color);
+		// fb_draw_line(x1, y1 + 2, x2 - 2, y2, color);		
+	}
+	else {
+		// 45°
+		fb_draw_line(x1, y1, x2, y2, color);
+		fb_draw_line(x1, y1 - 1, x2 - 1, y2, color);
+		fb_draw_line(x1 + 1, y1, x2, y2 + 1, color);
+		fb_draw_line(x1, y1 - 2, x2 - 2, y2, color);
+		// fb_draw_line(x1 + 2, y1, x2, y2 + 2, color);
+	}
+}
+
 void fb_draw_image(int x, int y, fb_image* image, int color)
 {
 	if (image == NULL) return;
@@ -404,7 +434,19 @@ void fb_draw_ring(int x0, int y0, int radius, int color) {
 	for (int i = 0; i < 2 * radius; i ++) {
 		for (int j = 0; j < 2 * radius; j ++) {
 			int dis = (i - radius) * (i - radius) + (j - radius) * (j - radius);
-			if (dis <= radius * radius && dis >= (radius - 3) * (radius - 3)) {
+			if (dis <= (radius * radius + radius) && dis >= ((radius - 3) * (radius - 3))) { // radius * radius + radius 稍微更圆滑些
+				*(buf + (y0 - radius + i) * SCREEN_WIDTH + (x0 - radius + j)) = color;
+			}
+		}
+	}
+}
+
+void fb_draw_filled_circle(int x0, int y0, int radius, int color) {
+	int* buf = _begin_draw(x0 - radius, y0 - radius, 2 * radius, 2 * radius);
+	for (int i = 0; i < 2 * radius; i ++) {
+		for (int j = 0; j < 2 * radius; j ++) {
+			int dis = (i - radius) * (i - radius) + (j - radius) * (j - radius);
+			if (dis <= radius * radius) {
 				*(buf + (y0 - radius + i) * SCREEN_WIDTH + (x0 - radius + j)) = color;
 			}
 		}
