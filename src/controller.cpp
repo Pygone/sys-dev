@@ -5,6 +5,8 @@
 #include "controller.h"
 
 #include "beginer.h"
+const char* win_c = "win";
+const char* lose_c = "lose";
 
 extern "C" {
 #include "../common/common.h"
@@ -95,7 +97,6 @@ TouchType Controller::getTouchType(int touch_x, int touch_y, Activity state)
 	}
 	else if (state == begin)
 	{
-		// TODO
 		return invalid;
 	}
 	else if (state == choose_side)
@@ -119,6 +120,7 @@ void Controller::do_chess(int touch_x, int touch_y)
 		{
 			if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == myColor)
 			{
+				printf("switch\n");
 				// 更换选中的棋子 & 绘制选中的棋子
 				draw_message_prompt("");
 				printChess(); // 打印棋盘
@@ -129,6 +131,7 @@ void Controller::do_chess(int touch_x, int touch_y)
 			}
 			else
 			{
+				printf("landing\n");
 				// 记录nxt & 绘制落点(要么为空, 要么是对方的棋子)
 				draw_message_prompt("");
 				printChess();
@@ -145,6 +148,7 @@ void Controller::do_chess(int touch_x, int touch_y)
 		{
 			if (chessBoard[pos.x][pos.y]->getChessColor() == myColor)
 			{
+				printf("choose\n");
 				// 选中棋子 & 绘制选中的棋子
 				draw_message_prompt("");
 				printChess();
@@ -174,17 +178,18 @@ bool Controller::do_queren()
 {
 	if (hasChoose && hasLanding)
 	{
-		hasChoose = false;
-		hasLanding = false;
+		printf("do move %d %d %d %d\n", pre_pos.x, pre_pos.y, nxt_pos.x, nxt_pos.y);
 		if (!chessBoard[pre_pos.x][pre_pos.y]->move(nxt_pos))
 		{
-			draw_message_prompt("Invalid move!");
+			printf("invalid move\n");
 			printChess();
+			draw_message_prompt("Invalid move!");
 			fb_update();
 			return false;
 		}
 		else
 		{
+			printf("success move\n");
 			printChess();
 			draw_message_prompt("");
 			fb_update();
@@ -250,6 +255,7 @@ touch_result Controller::do_touch(int touch_x, int touch_y)
 					message.Serialize(pre_pos, nxt_pos);
 					return touch_result::move_chess;
 				}
+				return touch_result::invalid;
 				break;
 			}
 			case touxiang:
@@ -271,7 +277,29 @@ touch_result Controller::do_touch(int touch_x, int touch_y)
 	}
 	else if (current_state == begin)
 	{
-		return touch_result::invalid;
+		if (isClickBegin(touch_x, touch_y))
+		{
+			return touch_result::begin;
+		}
+		else
+		{
+			return touch_result::invalid;
+		}
+	}
+	else if (current_state == choose_side)
+	{
+		if (isClickChooseRed(touch_x, touch_y))
+		{
+			return touch_result::choose_red;
+		}
+		else if (isClickChooseBlack(touch_x, touch_y))
+		{
+			return touch_result::choose_black;
+		}
+		else
+		{
+			return touch_result::invalid;
+		}
 	}
 	else
 	{
@@ -287,20 +315,28 @@ void Controller::handleMessage(int fd)
 	}
 	if (current_state == pairing)
 	{
-		if (whoFirst(fd) == pairStatus::to_choose)
+		pairStatus status = whoFirst(fd);
+		if (status == pairStatus::to_choose)
 		{
+			printf("to choose\n");
 			current_state = choose_side;
-			// draw_choose_side();// TODO: draw choose side
+			draw_match_win();
 		}
-		else if (whoFirst(fd) == pairStatus::to_wait)
+		else if (status == pairStatus::to_wait)
 		{
+			printf("to wait\n");
 			current_state = wait;
-			// draw_wait();// TODO: draw wait
+			draw_match_lose();
+		}
+		else
+		{
+			whoFirst(fd);
 		}
 	}
 	else if (current_state == wait)
 	{
 		int n = 0;
+		printf("wait\n");
 		n = myRead_nonblock(fd, message.getMessage(), 100);
 		if (n <= 0)
 		{
@@ -311,13 +347,19 @@ void Controller::handleMessage(int fd)
 		sscanf(message.getMessage(), "%d", &num);
 		if (num == 1)
 		{
+			printf("your side is red\n");
 			myColor = player::red;
+			setTurnOn();
 		}
 		else
 		{
+			printf("your side is black\n");
 			myColor = player::black;
+			setTurnOff();
 		}
 		current_state = playing;
+		initChessBoard(myColor);
+		initChess();
 	}
 	else if (current_state == playing)
 	{
@@ -325,6 +367,7 @@ void Controller::handleMessage(int fd)
 		if (getYourTurn()) return;
 		setTurnOn();
 		n = myRead_nonblock(fd, message.getMessage(), 100);
+
 		if (n <= 0)
 		{
 			printf("close bluetooth tty fd\n");
@@ -344,9 +387,38 @@ void Controller::handleMessage(int fd)
 			return;
 		}
 		message.Deserialize();
-		message.clearMessage();
-		printChess();
-		fb_update();
+		Status res = checkResult();
+		if (res == Status::playing)
+		{
+			printChess();
+			fb_update();
+		}
+		else if (res == Status::redWin)
+		{
+			bool win = myColor == player::red;
+			if (win)
+			{
+				draw_win();
+			}
+			else
+			{
+				draw_lose();
+			}
+			setOver();
+		}
+		else if (res == Status::blackWin)
+		{
+			bool win = myColor == player::black;
+			if (win)
+			{
+				draw_win();
+			}
+			else
+			{
+				draw_lose();
+			}
+			setOver();
+		}
 	}
 }
 void Controller::handleTouch(int fd)
@@ -354,6 +426,7 @@ void Controller::handleTouch(int fd)
 	if (current_state == wait || current_state == over || current_state == pairing || (current_state == playing && !
 		getYourTurn()))
 	{
+		if (current_state == over)exit(1);
 		return;
 	}
 	int type, x, y, finger;
@@ -365,37 +438,62 @@ void Controller::handleTouch(int fd)
 		touch_result status = do_touch(x, y);
 		if (status == touch_result::move_chess)
 		{
-			myWrite_nonblock(fd, message.getMessage(), 100);
+			printf("move chess\n");
+			Status res = checkResult();
+			myWrite_nonblock(bluetooth_fd, message.getMessage(), 100);
 			setTurnOff();
+			if (res == Status::playing)
+			{
+				// do nothing
+			}
+			else if (res == Status::redWin)
+			{
+				bool win = myColor == player::red;
+				draw_win();
+				setOver();
+			}
+			else if (res == Status::blackWin)
+			{
+				bool win = myColor == player::black;
+				draw_lose();
+				setOver();
+			}
 		}
 		else if (status == touch_result::touxiang)
 		{
-			myWrite_nonblock(fd, (void*)"touxiang", 100);
+			myWrite_nonblock(bluetooth_fd, (void*)"touxiang", 100);
 			draw_lose();
 			setOver();
 		}
 		else if (status == touch_result::begin)
 		{
 			// draw_pairing();// TODO: draw pairing
+			printf("pairing\n");
+			draw_match();
 			current_state = pairing;
+			whoFirst(bluetooth_fd);
 		}
 		else if (status == touch_result::choose_red)
 		{
-			myWrite_nonblock(fd, (void*)"1", 100);
+			printf("your side is red\n");
+			myWrite_nonblock(bluetooth_fd, (void*)"1", 100);
 			myColor = player::red;
 			initChessBoard(myColor);
 			initChess();
 			current_state = playing;
+			setTurnOn();
 		}
 		else if (status == touch_result::choose_black)
 		{
-			myWrite_nonblock(fd, (void*)"2", 100);
+			printf("your side is black\n");
+			myWrite_nonblock(bluetooth_fd, (void*)"2", 100);
 			myColor = player::black;
 			initChessBoard(myColor);
 			initChess();
 			current_state = playing;
+			setTurnOff();
 		}
-		else if (status == touch_result::invalid)
+		else
 		{
 			// do nothing
 		}

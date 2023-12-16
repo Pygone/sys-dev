@@ -32,7 +32,8 @@ int main()
 	if (bluetooth_fd == -1) return 0;
 	touch_fd = touch_init("/dev/input/event2");
 	if (touch_fd == -1) return 0;
-	// draw_begin(); // TODO: draw begin
+	draw_begin(); // TODO: draw begin
+	printf("begin\n");
 	ctrler.init(bluetooth_fd, touch_fd);
 	task_add_file(touch_fd, touch_event_cb);
 	task_add_file(bluetooth_fd, bluetooth_event_cb);

@@ -23,7 +23,7 @@ enum player
 	red,
 	black
 };
-enum class status
+enum class Status
 {
 	redWin,
 	blackWin,
@@ -121,4 +121,4 @@ class ChessBing : public Chess
 };
 extern Chess* chessBoard[10][9];
 extern void initChessBoard(player player_);
-extern status checkResult();
+extern Status checkResult();

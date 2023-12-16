@@ -21,11 +21,11 @@ static void draw_back() {
 
 static void draw_welcome(bool flag) {
     if (flag) {
-        fb_image* img = fb_read_jpeg_image("../pic/xuhua600.jpg"); // 最终版本
+        fb_image* img = fb_read_jpeg_image("./pic/xuhua600.jpg"); // 最终版本
         fb_draw_image(0, 0, img, 0);
-    } 
+    }
     else {
-        fb_image* img = fb_read_jpeg_image("../pic/main.jpg"); // 最终版本
+        fb_image* img = fb_read_jpeg_image("./pic/main.jpg"); // 最终版本
         fb_draw_image(0, 0, img, 0);
         draw_back();
     }
@@ -69,7 +69,7 @@ static void draw_frames() {
     fb_draw_text(XBaseline - 100, 90, "取", 40, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(XBaseline - 100, 150, "消", 40, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(XBaseline - 100, 270, "确", 40, CHESS_FONT_COLOR, RIGHT);
-    fb_draw_text(XBaseline - 100, 330, "定", 40, CHESS_FONT_COLOR, RIGHT);   
+    fb_draw_text(XBaseline - 100, 330, "定", 40, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(XBaseline - 100, 450, "投", 40, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(XBaseline - 100, 510, "降", 40, CHESS_FONT_COLOR, RIGHT);
 }
@@ -92,11 +92,12 @@ void draw_message_prompt(char* msg) {
 void draw_chessboard() {
     // 绘制背景
     // fb_draw_rect(XBaseline - 40, 20, 620, 560, COLOR_Tan3);
-    draw_welcome(true); 
-
+    draw_welcome(true);
+    draw_frames(); // 绘制按钮框
+    draw_region(); // 绘制提示区
     // 画横线
     for (int i = 60;i <= 540; i += 60) {
-        if (i == 60 || i == 540) 
+        if (i == 60 || i == 540)
             fb_draw_bold_line(XBaseline, i, XBaseline + 9 * 60, i, COLOR_grey41);
         else {
             fb_draw_bold_line(XBaseline, i, XBaseline + 4 * 60, i, COLOR_grey41);
@@ -109,7 +110,7 @@ void draw_chessboard() {
         fb_draw_bold_line(i, 60, i, 540, COLOR_grey41);
     }
 
-    // 画斜线 
+    // 画斜线
     fb_draw_bold_line(XBaseline, 240, XBaseline + 120, 360, COLOR_grey41);
     fb_draw_bold_line(XBaseline, 360, XBaseline + 120, 240, COLOR_grey41);
     fb_draw_bold_line(XBaseline + 7 * 60, 240, XBaseline + 9 * 60, 360, COLOR_grey41);
@@ -241,8 +242,6 @@ void printChess() {
 
 void initChess() {
     draw_chessboard(); // 绘制棋盘
-    draw_frames(); // 绘制按钮框
-    draw_region(); // 绘制提示区
     for (auto & i : chessBoard) {
 		for (auto & j : i) {
 			if (j != nullptr) {
@@ -254,7 +253,7 @@ void initChess() {
 }
 
 void draw_win() {
-    draw_welcome(false);
+    // draw_welcome(false);// 保留棋盘, 显示为什么赢
     // fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
     fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 60, "W", 150, COLOR_RED, RIGHT);
     fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 60 + 100, "in!", 150, COLOR_RED, RIGHT);
@@ -262,7 +261,7 @@ void draw_win() {
 }
 
 void draw_lose() {
-    draw_welcome(false);
+    // draw_welcome(false);// 保留棋盘, 显示为什么输
     // fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
     fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 80, "Lose!", 150, COLOR_RED, RIGHT);
     fb_update();
@@ -270,7 +269,7 @@ void draw_lose() {
 
 void draw_begin() {
     draw_welcome(false);
-    fb_image* img = fb_read_jpeg_image("../pic/start.jpg");
+    fb_image* img = fb_read_jpeg_image("./pic/start.jpg");
     fb_draw_image(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 160, img, 0);
     fb_update();
 }

@@ -4,7 +4,6 @@
 
 #include "beginer.h"
 
-
 extern "C" {
 #include <common/common.h>
 }
@@ -37,6 +36,7 @@ pairStatus whoFirst(int fd)
 		{
 			rand_num = -1;
 			num = -1;
+			send_or_recv = true;
 		}
 		else if (rand_num > num)
 		{

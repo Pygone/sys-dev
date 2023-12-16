@@ -184,7 +184,7 @@ void Chess::setChessColor(player player)
 	player_ = player;
 }
 
-status checkResult()
+Status checkResult()
 {
 	bool red = false, black = false;
 	for (auto& i : chessBoard)
@@ -198,8 +198,8 @@ status checkResult()
 			}
 		}
 	}
-	if (red && black) return status::playing;
-	else if (red) return status::redWin;
-	else if (black) return status::blackWin;
-	else return status::playing;
+	if (red && black) return Status::playing;
+	else if (red) return Status::redWin;
+	else if (black) return Status::blackWin;
+	else return Status::playing;
 }
