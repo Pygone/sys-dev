@@ -3,15 +3,19 @@
 //
 
 #include "message.h"
+
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+
 #include "chess.h"
 Position translate(Position pos)
 {
 	return { 9 - pos.x, 8 - pos.y };
 }
-void Message::Serialize(Position pre_pos, Position pos) const
+void Message::Serialize(Position pre_pos, Position pos)
 {
-	pre_pos = translate(pre_pos);
-	pos = translate(pos);
+	clearMessage();
 	sprintf(message, "%d %d %d %d", pre_pos.x, pre_pos.y, pos.x, pos.y);
 }
 void Message::Deserialize() const
@@ -21,6 +25,7 @@ void Message::Deserialize() const
 	pre_pos = translate(pre_pos);
 	pos = translate(pos);
 	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
+	chessBoard[pos.x][pos.y]->pos_ = pos;
 	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
 }
 char* Message::getMessage() const
@@ -35,4 +40,8 @@ Message::Message()
 Message::~Message()
 {
 	delete[] message;
+}
+void Message::clearMessage()
+{
+	memset(message, 0, sizeof(message));
 }

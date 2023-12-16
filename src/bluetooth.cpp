@@ -23,22 +23,3 @@ int bluetooth_tty_init(const char* dev)
 	}
 	return fd;
 }
-
-void bluetooth_tty_event_cb(int fd)
-{
-	memset(buf, 0, sizeof(buf));
-	int len = myRead_nonblock(fd, buf, sizeof(buf));
-	if (len > 0)
-	{
-		buf[len] = '\0';
-		printf("bluetooth_tty_event_cb read: %s\n", buf);
-	}
-	else if (len < 0)
-	{
-		printf("bluetooth_tty_event_cb read error(%d): %s\n", errno, strerror(errno));
-	}
-	else
-	{
-		printf("bluetooth_tty_event_cb read EOF\n");
-	}
-}

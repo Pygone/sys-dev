@@ -1,5 +1,6 @@
 
-add_library(chess_lib chess.cpp message.cpp bluetooth.cpp show.cpp controller.cpp)
+add_library(chess_lib chess.cpp message.cpp bluetooth.cpp show.cpp controller.cpp
+        beginer.cpp)
 
 target_link_libraries(chess_lib
         common

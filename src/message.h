@@ -12,7 +12,8 @@ class Message
 		char* message{};
 		Message();
 		~Message();
-		void Serialize(Position pre_pos, Position pos) const;
+		void Serialize(Position pre_pos, Position pos);
 		void Deserialize() const;
+		void clearMessage();
 		char* getMessage() const;
 };

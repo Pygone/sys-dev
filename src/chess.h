@@ -23,7 +23,7 @@ enum player
 	red,
 	black
 };
-enum class result
+enum class status
 {
 	redWin,
 	blackWin,
@@ -41,7 +41,7 @@ class Chess
 		Chess(player player, chessType type, Position pos): player_(player), type_(type), pos_(pos)
 		{
 		}
-		virtual bool move(Position pos) = 0;
+		virtual bool move(const Position& pos) = 0;
 		virtual ~Chess()
 		= default;
 		chessType getChessType() const;
@@ -55,7 +55,7 @@ class ChessJiang : public Chess
 		ChessJiang(player player, Position pos) : Chess(player, chessType::jiang, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessJiang() override
 		= default;
 };
@@ -65,7 +65,7 @@ class ChessShi : public Chess
 		ChessShi(player player, Position pos) : Chess(player, chessType::shi, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessShi() override
 		= default;
 };
@@ -75,7 +75,7 @@ class ChessXiang : public Chess
 		ChessXiang(player player, Position pos) : Chess(player, chessType::xiang, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessXiang() override
 		= default;
 };
@@ -85,7 +85,7 @@ class ChessMa : public Chess
 		ChessMa(player player, Position pos) : Chess(player, chessType::ma, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessMa() override
 		= default;
 };
@@ -95,7 +95,7 @@ class ChessJu : public Chess
 		ChessJu(player player, Position pos) : Chess(player, chessType::ju, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessJu() override
 		= default;
 };
@@ -105,7 +105,7 @@ class ChessPao : public Chess
 		ChessPao(player player, Position pos) : Chess(player, chessType::pao, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessPao() override
 		= default;
 };
@@ -115,10 +115,10 @@ class ChessBing : public Chess
 		ChessBing(player player, Position pos) : Chess(player, chessType::bing, pos)
 		{
 		}
-		bool move(Position pos) override;
+		bool move(const Position& pos) override;
 		~ChessBing() override
 		= default;
 };
 extern Chess* chessBoard[10][9];
 extern void initChessBoard(player player_);
-extern result checkResult();
+extern status checkResult();

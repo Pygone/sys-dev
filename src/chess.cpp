@@ -47,7 +47,7 @@ void initChessBoard(player player_)
 	chessBoard[6][6] = new ChessBing(other, { 6, 6 });
 	chessBoard[6][8] = new ChessBing(other, { 6, 8 });
 }
-bool ChessJiang::move(Position pos)
+bool ChessJiang::move(const Position& pos)
 {
 	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
@@ -57,7 +57,7 @@ bool ChessJiang::move(Position pos)
 	pos_ = pos;
 	return true;
 }
-bool ChessShi::move(Position pos)
+bool ChessShi::move(const Position& pos)
 {
 	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) != 1 || abs(pos.y - pos_.y) != 1) return false;
@@ -67,7 +67,7 @@ bool ChessShi::move(Position pos)
 	pos_ = pos;
 	return true;
 }
-bool ChessXiang::move(Position pos)
+bool ChessXiang::move(const Position& pos)
 {
 	if (pos.x > 5 || pos.x < 0 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) != 2 || abs(pos.y - pos_.y) != 2) return false;
@@ -78,7 +78,7 @@ bool ChessXiang::move(Position pos)
 	pos_ = pos;
 	return true;
 }
-bool ChessMa::move(Position pos)
+bool ChessMa::move(const Position& pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 3) return false;
@@ -96,7 +96,7 @@ bool ChessMa::move(Position pos)
 	pos_ = pos;
 	return true;
 }
-bool ChessJu::move(Position pos)
+bool ChessJu::move(const Position& pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (pos.x != pos_.x && pos.y != pos_.y) return false;
@@ -124,7 +124,7 @@ bool ChessJu::move(Position pos)
 	pos_ = pos;
 	return true;
 }
-bool ChessPao::move(Position pos)
+bool ChessPao::move(const Position& pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (pos.x != pos_.x && pos.y != pos_.y) return false;
@@ -156,7 +156,7 @@ bool ChessPao::move(Position pos)
 	pos_ = pos;
 	return true;
 }
-bool ChessBing::move(Position pos)
+bool ChessBing::move(const Position& pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
@@ -184,7 +184,7 @@ void Chess::setChessColor(player player)
 	player_ = player;
 }
 
-result checkResult()
+status checkResult()
 {
 	bool red = false, black = false;
 	for (auto& i : chessBoard)
@@ -198,8 +198,8 @@ result checkResult()
 			}
 		}
 	}
-	if (red && black) return result::playing;
-	else if (red) return result::redWin;
-	else if (black) return result::blackWin;
-	else return result::playing;
+	if (red && black) return status::playing;
+	else if (red) return status::redWin;
+	else if (black) return status::blackWin;
+	else return status::playing;
 }
