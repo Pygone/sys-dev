@@ -366,7 +366,7 @@ bool isClickChooseBlack(int posx, int posy) {
 }
 
 void mytest() {
-    draw_match();
+    draw_match_lose();
     fb_update();
 }
 
