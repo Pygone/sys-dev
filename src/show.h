@@ -18,12 +18,17 @@ void draw_landing_point(Position pos);
 void initChess(); 
 void printChess();
 void draw_message_prompt(char* msg);
-void draw_win();
-void draw_lose();
-void draw_begin();
-void draw_match();
-void draw_match_win();
-void draw_match_lose();
+void draw_win(); // 游戏结束(win)
+void draw_lose(); // 游戏结束(lose)
+void draw_begin(); // 开始界面
+void draw_match(); // 匹配界面
+void draw_match_win(); // 匹配win(即选边界面)
+void draw_match_lose(); // 匹配lose(即等待对方选边界面)
 
+/*************用于被调用************/
+bool isClickBegin(int x, int y); // 是否按下开始按钮
+bool isClickQuit(int x, int y); // 是否按下退出按钮
+bool isClickChooseRed(int x, int y); // 是否按下选红按钮
+bool isClickChooseBlack(int x, int y); // 是否按下选黑按钮
 
 void mytest();

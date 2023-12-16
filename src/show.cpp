@@ -332,6 +332,39 @@ void draw_match_lose() {
     fb_update();
 }
 
+bool isClickBegin(int posx, int posy) {
+    int x = SCREEN_WIDTH / 2 + 40, y = SCREEN_HEIGHT / 2 - 160;
+    int w = 90, h = 340;
+    if (posx >= x && posx <= x + w && posy >= y && posy <= y + h) {
+        return true;
+    }
+    return false;
+}
+
+bool isClickQuit(int posx, int posy) {
+    int x = 990, delta = 20, y = 10, len = 55;
+    if (posx >= x - delta && posx <= x + delta && posy >= y && posy <= y + len) {
+        return true;
+    }
+    return false;
+}
+
+bool isClickChooseRed(int posx, int posy) {
+    int x = SCREEN_WIDTH / 2 + 40, y = SCREEN_HEIGHT / 2 - 120 + 40 - 10, radius = CHESS_Radius * 2;
+    if ((posx - x) * (posx - x) + (posy - y) * (posy - y) <= radius * radius) {
+        return true;
+    }
+    return false;
+}
+
+bool isClickChooseBlack(int posx, int posy) {
+    int x = SCREEN_WIDTH / 2 + 40, y = SCREEN_HEIGHT / 2 - 120 + 240 - 40, radius = CHESS_Radius * 2;
+    if ((posx - x) * (posx - x) + (posy - y) * (posy - y) <= radius * radius) {
+        return true;
+    }
+    return false;
+}
+
 void mytest() {
     draw_match();
     fb_update();
