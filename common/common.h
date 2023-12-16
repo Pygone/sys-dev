@@ -37,9 +37,10 @@ typedef enum {
 #define COLOR_Tan3 0xcd853f // 棋盘底色
 #define COLOR_DeepSkyBlue 0x00bfff
 #define COLOR_LightSkyBlue 0x87cefa
+#define COLOR_Cyan1 0x00ffff
 
 // 棋局的基本文字颜色
-#define CHESS_FONT_COLOR 0xffffff
+#define CHESS_FONT_COLOR 0x4f4f4f
 
 // 棋子大小设置
 #define CHESS_Radius 27

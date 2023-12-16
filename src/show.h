@@ -20,5 +20,10 @@ void printChess();
 void draw_message_prompt(char* msg);
 void draw_win();
 void draw_lose();
+void draw_begin();
+void draw_match();
+void draw_match_win();
+void draw_match_lose();
+
 
 void mytest();

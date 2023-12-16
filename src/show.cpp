@@ -9,6 +9,29 @@ extern "C" {
     #include "../common/common.h"
 }
 
+static void draw_back() {
+    int x = 990, y = 10;
+    int delta = 20;
+    int len = 55;
+    fb_draw_bold_line(x, y, x, y + len, COLOR_grey41);
+    fb_draw_bold_line(x, y, x + delta, y + delta, COLOR_grey41);
+    fb_draw_bold_line(x, y, x - delta, y + delta, COLOR_grey41);
+    fb_update();
+}
+
+static void draw_welcome(bool flag) {
+    if (flag) {
+        fb_image* img = fb_read_jpeg_image("../pic/xuhua600.jpg"); // 最终版本
+        fb_draw_image(0, 0, img, 0);
+    } 
+    else {
+        fb_image* img = fb_read_jpeg_image("../pic/main.jpg"); // 最终版本
+        fb_draw_image(0, 0, img, 0);
+        draw_back();
+    }
+    fb_update();
+}
+
 static void draw_below(int x, int y) {
     fb_draw_bold_line(x - 5, y + 5, x - 10, y + 5, COLOR_grey41);
     fb_draw_bold_line(x + 5, y + 5, x + 10, y + 5, COLOR_grey41);
@@ -52,7 +75,7 @@ static void draw_frames() {
 }
 
 static void draw_region() {
-    fb_draw_rect(prompt_x, 20, 150, 560, COLOR_Tan3);
+    // fb_draw_rect(prompt_x, 20, 150, 560, COLOR_WHITE);
     fb_draw_text(prompt_x + 130, 35, "消", 30, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(prompt_x + 130, 65, "息", 30, CHESS_FONT_COLOR, RIGHT);
     fb_draw_text(prompt_x + 130, 95, "提", 30, CHESS_FONT_COLOR, RIGHT);
@@ -61,14 +84,15 @@ static void draw_region() {
 }
 
 void draw_message_prompt(char* msg) {
-    fb_draw_rect(prompt_x, 20, 110, 560, COLOR_Tan3);
+    // fb_draw_rect(prompt_x, 20, 110, 560, COLOR_WHITE);
     fb_draw_text(prompt_x_st, 40, msg, 30, CHESS_FONT_COLOR, RIGHT);
     fb_update();
 }
 
 void draw_chessboard() {
     // 绘制背景
-    fb_draw_rect(XBaseline - 40, 20, 620, 560, COLOR_Tan3);
+    // fb_draw_rect(XBaseline - 40, 20, 620, 560, COLOR_Tan3);
+    draw_welcome(true); 
 
     // 画横线
     for (int i = 60;i <= 540; i += 60) {
@@ -230,32 +254,86 @@ void initChess() {
 }
 
 void draw_win() {
-    fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+    draw_welcome(false);
+    // fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
     fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 60, "W", 150, COLOR_RED, RIGHT);
     fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 60 + 100, "in!", 150, COLOR_RED, RIGHT);
     fb_update();
 }
 
 void draw_lose() {
-    fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+    draw_welcome(false);
+    // fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
     fb_draw_text(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 80, "Lose!", 150, COLOR_RED, RIGHT);
     fb_update();
 }
 
+void draw_begin() {
+    draw_welcome(false);
+    fb_image* img = fb_read_jpeg_image("../pic/start.jpg");
+    fb_draw_image(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 160, img, 0);
+    fb_update();
+}
+
+static void draw_waiting(int color) {
+    // fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK); // TODO:test
+    int x = SCREEN_WIDTH / 2 + 80, y = SCREEN_HEIGHT / 2;
+    int r = 18; // 勾股数(45°)
+    int rr = 11;
+    int bias = 8;
+    fb_draw_bold_line(x + bias, y, x + bias + r, y, color); // 上
+    fb_draw_bold_line(x, y - bias - r, x, y - bias, color); // 左
+    fb_draw_bold_line(x - bias - r, y, x - bias, y, color); // 下
+    fb_draw_bold_line(x, y + bias, x, y + bias + r, color); // 右
+    fb_draw_bold_line(x + bias + rr, y - bias - rr, x + bias, y - bias, color); // 左上
+    fb_draw_bold_line(x - bias - rr - 1, y - bias - rr - 1, x - bias, y - bias, color); // 左下
+    fb_draw_bold_line(x - bias, y + bias, x - bias - rr, y + bias + rr, color); // 右下
+    fb_draw_bold_line(x + bias, y + bias, x + bias + rr + 1, y + bias + rr + 1, color); // 右上
+    fb_update();
+}
+
+void draw_match() {
+    draw_welcome(false);
+    fb_draw_text(SCREEN_WIDTH / 2 + 170, SCREEN_HEIGHT / 2 - 70, "匹 配 中", 50, COLOR_BLACK, RIGHT);
+    draw_waiting(COLOR_RED);
+    fb_update();
+}
+
+static void draw_chesspiece_for_match_win(int x, int y, chessType type_, player play_) {
+    char* buf;
+    buf = getCharacters(type_, play_); // 获取棋子字符
+    fb_draw_filled_circle(x, y, CHESS_Radius * 2, COLOR_Tan2); // 画棋子底色
+    int color = COLOR_BLACK;
+    if (play_ == player::red) {
+        color = COLOR_RED;
+    }
+    fb_draw_ring(x, y, CHESS_Ring * 2, color); // 画棋子边框
+    if (play_ == player::red) {
+        fb_draw_text(x, y, buf, CHESS_FontSize * 2, COLOR_RED, RIGHT); // 画棋子字符
+    } else {
+        fb_draw_text(x, y, buf, CHESS_FontSize * 2, COLOR_BLACK, RIGHT); // 画棋子字符
+    }
+}
+
+void draw_match_win() {
+    draw_welcome(false);
+    fb_draw_text(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - 120, "执红", 60, COLOR_RED, RIGHT);
+    fb_draw_text(SCREEN_WIDTH / 2 + 150, SCREEN_HEIGHT / 2 - 120 + 180, "执黑", 60, COLOR_BLACK, RIGHT);
+    Chess* jiang = new ChessJiang(black, { 0, 0 });
+    Chess* shuai = new ChessJiang(red, { 0, 0 });
+    draw_chesspiece_for_match_win(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 120 + 40 - 10, shuai->getChessType(), shuai->getChessColor());
+    draw_chesspiece_for_match_win(SCREEN_WIDTH / 2 + 40, SCREEN_HEIGHT / 2 - 120 + 240 - 40, jiang->getChessType(), jiang->getChessColor());
+    fb_update();
+}
+
+void draw_match_lose() {
+    draw_welcome(false);
+    fb_draw_text(SCREEN_WIDTH / 2 + 100, SCREEN_HEIGHT / 2 - 120, "等待对方选边", 50, COLOR_BLACK, RIGHT);
+    fb_update();
+}
+
 void mytest() {
-    draw_win();
-    // draw_chessboard();
-    // fb_update();
-	// for (int i = 0; i < 10; i++) {
-	// 	for (int j = 0; j < 9; j++) {
-	// 		if (chessBoard[i][j] != nullptr) {
-	// 			draw_choose(chessBoard[i][j]->pos_, chessBoard[i][j]->getChessType(), chessBoard[i][j]->getChessColor());
-	// 		}
-    //         else {
-    //             draw_landing_point({i, j});
-    //         }
-	// 	}
-	// }
+    draw_match();
     fb_update();
 }
 

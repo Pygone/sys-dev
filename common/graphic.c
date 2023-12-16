@@ -25,6 +25,35 @@ static struct area {
     (pa)->y2 = 0;\
 } while(0)
 
+// 文字 左旋or右旋
+static void turn(fb_image* img, TurnDirection dir) {
+	if (dir == NONE) 
+		return;
+	int w = img->pixel_w, h = img->pixel_h;
+	// printf("w:%d h:%d\n", w, h);
+	char buf[8100]; // 90 * 90 = 8100 // 1024 * 600 = 614400
+	memset(buf, '\0', sizeof(buf));
+	for (int x = 0; x < w; x ++) {
+		for (int y = 0; y < h; y ++) {
+			int origin = y * w + x;
+			int nxt = 0;
+			if (dir == LEFT) { 
+				int nxt = (w - x) * h + y;
+				buf[nxt] = img->content[origin]; 
+			}
+			else if (dir == RIGHT) { 
+				nxt = x * h + h - y; 
+				buf[nxt] = img->content[origin];
+			}
+		}
+	}
+	for (int i = 0; i < w * h; i++) {
+		img->content[i] = buf[i];
+	}
+	img->pixel_h = w;
+	img->pixel_w = h;
+}
+
 void fb_init(char* dev)
 {
 	int fd;
@@ -204,6 +233,7 @@ void fb_draw_line(int x1, int y1, int x2, int y2, int color)
 }
 
 void fb_draw_bold_line(int x1, int y1, int x2, int y2, int color) {
+	// printf("%d %d %d %d\n", x1, y1, x2, y2); // TODO:delete this line
 	if (x1 == x2) { // 斜率不存在
 		fb_draw_line(x1 - 1, y1, x2 - 1, y2, color);
 		fb_draw_line(x1, y1, x2, y2, color);
@@ -236,7 +266,6 @@ void fb_draw_bold_line(int x1, int y1, int x2, int y2, int color) {
 void fb_draw_image(int x, int y, fb_image* image, int color)
 {
 	if (image == NULL) return;
-
 	int ix = 0; //image x
 	int iy = 0; //image y
 	int w = image->pixel_w; //draw width
@@ -272,6 +301,7 @@ void fb_draw_image(int x, int y, fb_image* image, int color)
 
 	if (image->color_type == FB_COLOR_RGB_8880) /*lab3: jpg*/
 	{
+		// turn_jpg(image, RIGHT); // 图片旋转 90°
 		int y0, y3, w_4 = w * 4, SCREEN_WIDTH_4 = SCREEN_WIDTH * 4;
 		src = image->content;
 		for (y0 = y, y3 = iy; y0 < y + h; y0++, y3++) {
@@ -351,34 +381,6 @@ void fb_draw_border(int x, int y, int w, int h, int color)
 		fb_draw_rect(x, y + 1, 1, h - 2, color);
 		if (w > 1) fb_draw_rect(x + w - 1, y + 1, 1, h - 2, color);
 	}
-}
-
-// 文字 左旋or右旋
-static void turn(fb_image* img, TurnDirection dir) {
-	if (dir == NONE) 
-		return;
-	int w = img->pixel_w, h = img->pixel_h;
-	char buf[8192]; // 90 * 90 = 8100
-	memset(buf, '\0', sizeof(buf));
-	for (int x = 0; x < w; x ++) {
-		for (int y = 0; y < h; y ++) {
-			int origin = y * w + x;
-			int nxt = 0;
-			if (dir == LEFT) { 
-				int nxt = (w - x) * h + y;
-				buf[nxt] = img->content[origin]; 
-			}
-			else if (dir == RIGHT) { 
-				nxt = x * h + h - y; 
-				buf[nxt] = img->content[origin];
-			}
-		}
-	}
-	for (int i = 0; i < w * h; i++) {
-		img->content[i] = buf[i];
-	}
-	img->pixel_h = w;
-	img->pixel_w = h;
 }
 
 /** draw a text string **/
