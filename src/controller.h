@@ -16,7 +16,8 @@ typedef enum {
 
 typedef enum {
     playing,
-    over
+    over,
+    begin
 }Activity;
 
 typedef enum {
@@ -36,6 +37,10 @@ class Controller {
         void init(player myColor_);
         char* do_touch(int touch_x, int touch_y);
         bool getYourTurn() { return yourTurn; }
+        void setBegin() { current_state = begin;}
+        void setTurnOn() { yourTurn = true; }
+        void setTurnOff() { yourTurn = false; }
+        void setPlaying() { current_state = playing;}
         void setOver() { current_state = over;}
 
     private:

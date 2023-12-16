@@ -50,6 +50,7 @@ void touch_event_cb(int fd)
 					printf("send: %s\n", ret);
 					myWrite_nonblock(bluetooth_fd, ret, strlen(ret));
 				}
+				// ctrler.setTurnOff(); TODO: remember to uncomment this
 				flag = true;
 			}
 			break;
@@ -71,6 +72,7 @@ void touch_event_cb(int fd)
 void bluetooth_event_cb(int fd)
 {
 	if (ctrler.getYourTurn()) return;
+	ctrler.setTurnOn();
 	Message msg;
 	int n;
 	memset(msg.getMessage(), 0, 100);

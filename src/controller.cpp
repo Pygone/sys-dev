@@ -204,7 +204,7 @@ char* Controller::do_touch(int touch_x, int touch_y) {
                 break;
         }
     }
-    else {
+    else if (current_state == over) {
         printf("quit\n");
         fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
         fb_update();
