@@ -48,6 +48,7 @@ class Chess
 		void setChessType(chessType type);
 		player getChessColor() const;
 		void setChessColor(player player);
+		void restore(const Position& originPos, const Position& nxtPos, Chess* nxtChess); // 恢复
 };
 class ChessJiang : public Chess
 {
@@ -122,3 +123,4 @@ class ChessBing : public Chess
 extern Chess* chessBoard[10][9];
 extern void initChessBoard(player player_);
 extern Status checkResult();
+bool gameOver(player TheColor); // TheColor是否必赢

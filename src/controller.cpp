@@ -389,38 +389,47 @@ void Controller::handleMessage(int fd)
 			return;
 		}
 		message.Deserialize();
-		Status res = checkResult();
-		if (res == Status::playing)
-		{
-			printChess();
-			fb_update();
-		}
-		else if (res == Status::redWin)
-		{
-			bool win = myColor == player::red;
-			if (win)
-			{
-				draw_win();
-			}
-			else
-			{
-				draw_lose();
-			}
+		printChess();
+		fb_update();
+		player otherColor = myColor == player::red ? player::black : player::red;
+		bool isOtherWin = gameOver(otherColor);
+		if (isOtherWin) {
+			// 对方必赢
+			draw_lose();
 			setOver();
 		}
-		else if (res == Status::blackWin)
-		{
-			bool win = myColor == player::black;
-			if (win)
-			{
-				draw_win();
-			}
-			else
-			{
-				draw_lose();
-			}
-			setOver();
-		}
+		// Status res = checkResult();
+		// if (res == Status::playing)
+		// {
+		// 	printChess();
+		// 	fb_update();
+		// }
+		// else if (res == Status::redWin)
+		// {
+		// 	bool win = myColor == player::red;
+		// 	if (win)
+		// 	{
+		// 		draw_win();
+		// 	}
+		// 	else
+		// 	{
+		// 		draw_lose();
+		// 	}
+		// 	setOver();
+		// }
+		// else if (res == Status::blackWin)
+		// {
+		// 	bool win = myColor == player::black;
+		// 	if (win)
+		// 	{
+		// 		draw_win();
+		// 	}
+		// 	else
+		// 	{
+		// 		draw_lose();
+		// 	}
+		// 	setOver();
+		// }
 	}
 }
 void Controller::handleTouch(int fd)
@@ -441,25 +450,31 @@ void Controller::handleTouch(int fd)
 		if (status == touch_result::move_chess)
 		{
 			printf("move chess\n");
-			Status res = checkResult();
 			myWrite_nonblock(bluetooth_fd, message.getMessage(), 100);
 			setTurnOff();
-			if (res == Status::playing)
-			{
-				// do nothing
-			}
-			else if (res == Status::redWin)
-			{
-				bool win = myColor == player::red;
+			bool isWin = gameOver(myColor);
+			if (isWin) {
+				// 我方必赢
 				draw_win();
 				setOver();
 			}
-			else if (res == Status::blackWin)
-			{
-				bool win = myColor == player::black;
-				draw_lose();
-				setOver();
-			}
+			// Status res = checkResult();
+			// if (res == Status::playing)
+			// {
+			// 	// do nothing
+			// }
+			// else if (res == Status::redWin)
+			// {
+			// 	bool win = myColor == player::red;
+			// 	draw_win();
+			// 	setOver();
+			// }
+			// else if (res == Status::blackWin)
+			// {
+			// 	bool win = myColor == player::black;
+			// 	draw_lose();
+			// 	setOver();
+			// }
 		}
 		else if (status == touch_result::touxiang)
 		{

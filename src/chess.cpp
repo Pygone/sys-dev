@@ -183,6 +183,86 @@ void Chess::setChessColor(player player)
 {
 	player_ = player;
 }
+void Chess::restore(const Position& originPos, const Position& nxtPos, Chess* nxtChess)
+{
+	chessBoard[originPos.x][originPos.y] = this;
+	chessBoard[nxtPos.x][nxtPos.y] = nxtChess;
+	pos_ = originPos;
+}
+
+/**
+ * @brief 判断当前棋局TheColor能否一步吃掉!TheColor的将
+ * @return true表示TheColor能吃掉!TheColor的将,false表示TheColor不能吃掉!TheColor的将
+*/
+static bool canWin(player TheColor) {
+	// 判断当前棋局TheColor能否一步吃掉!TheColor的将
+	Position otherJiangPos;
+	Chess* otherJiang = nullptr;
+	for (auto& i : chessBoard) {
+		for (auto & j : i) {
+			if (j != nullptr && j->getChessType() == chessType::jiang && j->getChessColor() != TheColor) {
+				otherJiangPos = j->pos_;
+				otherJiang = j; // 保存
+				break;
+			}
+		}
+	}
+	// 遍历所有自己的棋子,只要有一个棋子能吃掉对方将,则return true
+	for (auto& i : chessBoard) {
+		for (auto & j : i) {
+			if (j != nullptr && j->getChessColor() == TheColor) {
+				Position originPos = j->pos_;
+				if (j->move(otherJiangPos)) {
+					j->restore(originPos, otherJiangPos, otherJiang);
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+/**
+ * @brief 判断当前棋局TheColor是否必赢
+ * @return true表示TheColor必赢,false表示TheColor不一定必赢
+*/
+bool gameOver(player TheColor) { 
+	int cnt = 0; // !TheColor能走的类型数量(即考虑困毙)
+	for (auto& i : chessBoard)
+	{
+		for (auto& j : i)
+		{
+			if (j != nullptr && j->getChessColor() != TheColor) {
+				Position originPos = j->pos_; // 保存一下原先的位置
+				for (int x = 0; x < 10; x++)
+				{
+					for (int y = 0; y < 9; y++)
+					{
+						Position nxtPos = { x, y };
+						Chess* nxtChess = chessBoard[x][y];
+						if (j->move(nxtPos)) {
+							cnt ++; // !TheColor能走的类型数量+1
+							bool state = canWin(TheColor);
+							if (state) {
+								// TheColor能吃掉!TheColor的将,则!TheColor不能走这一步,继续判断下一步
+								j->restore(originPos, nxtPos, nxtChess);
+							}
+							else {
+								// TheColor不能吃掉!TheColor的将,则!TheColor能走这一步,直接return false
+								j->restore(originPos, nxtPos, nxtChess);
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	if (cnt == 0) 
+		return true;
+	else 
+		return false;
+}
 
 Status checkResult()
 {
