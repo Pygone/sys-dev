@@ -352,7 +352,7 @@ void draw_match(int size)
 	memcpy(buf, msg, 11 + size);
 	draw_welcome(false);
 	fb_draw_text(SCREEN_WIDTH / 2 + 170, SCREEN_HEIGHT / 2 - 70, buf, 50, COLOR_BLACK, RIGHT);
-	draw_waiting(COLOR_RED);
+	// draw_waiting(COLOR_RED);  // no need
 	fb_update();
 }
 

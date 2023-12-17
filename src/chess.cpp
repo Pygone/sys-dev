@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cstdio>
+#include <iostream>
 Chess* chessBoard[10][9];
 
 void initChessBoard(player player_)
@@ -62,6 +63,7 @@ bool ChessShi::move(const Position& pos)
 	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) != 1 || abs(pos.y - pos_.y) != 1) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
+	delete chessBoard[pos.x][pos.y];
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
 	pos_ = pos;
@@ -194,13 +196,17 @@ void Chess::restore(const Position& originPos, const Position& nxtPos, Chess* nx
  * @brief 判断当前棋局TheColor能否一步吃掉!TheColor的将
  * @return true表示TheColor能吃掉!TheColor的将,false表示TheColor不能吃掉!TheColor的将
 */
-static bool canWin(player TheColor) {
+bool canWin(player TheColor)
+{
 	// 判断当前棋局TheColor能否一步吃掉!TheColor的将
-	Position otherJiangPos;
+	Position otherJiangPos{};
 	Chess* otherJiang = nullptr;
-	for (auto& i : chessBoard) {
-		for (auto & j : i) {
-			if (j != nullptr && j->getChessType() == chessType::jiang && j->getChessColor() != TheColor) {
+	for (auto& i : chessBoard)
+	{
+		for (auto& j : i)
+		{
+			if (j != nullptr && j->getChessType() == chessType::jiang && j->getChessColor() != TheColor)
+			{
 				otherJiangPos = j->pos_;
 				otherJiang = j; // 保存
 				break;
@@ -208,12 +214,17 @@ static bool canWin(player TheColor) {
 		}
 	}
 	// 遍历所有自己的棋子,只要有一个棋子能吃掉对方将,则return true
-	for (auto& i : chessBoard) {
-		for (auto & j : i) {
-			if (j != nullptr && j->getChessColor() == TheColor) {
+	for (auto& i : chessBoard)
+	{
+		for (auto& j : i)
+		{
+			if (j != nullptr && j->getChessColor() == TheColor)
+			{
+				Chess* orignChess = chessBoard[j->pos_.x][j->pos_.y];
 				Position originPos = j->pos_;
-				if (j->move(otherJiangPos)) {
-					j->restore(originPos, otherJiangPos, otherJiang);
+				if (j->move(otherJiangPos))
+				{
+					orignChess->restore(originPos, otherJiangPos, otherJiang);
 					return true;
 				}
 			}
@@ -226,30 +237,36 @@ static bool canWin(player TheColor) {
  * @brief 判断当前棋局TheColor是否必赢
  * @return true表示TheColor必赢,false表示TheColor不一定必赢
 */
-bool gameOver(player TheColor) { 
+bool gameOver(player TheColor)
+{
 	int cnt = 0; // !TheColor能走的类型数量(即考虑困毙)
 	for (auto& i : chessBoard)
 	{
 		for (auto& j : i)
 		{
-			if (j != nullptr && j->getChessColor() != TheColor) {
+			if (j != nullptr && j->getChessColor() != TheColor)
+			{
 				Position originPos = j->pos_; // 保存一下原先的位置
 				for (int x = 0; x < 10; x++)
 				{
 					for (int y = 0; y < 9; y++)
 					{
 						Position nxtPos = { x, y };
+						Chess* orignChess = chessBoard[originPos.x][originPos.y];
 						Chess* nxtChess = chessBoard[x][y];
-						if (j->move(nxtPos)) {
-							cnt ++; // !TheColor能走的类型数量+1
+						if (j->move(nxtPos))
+						{
+							cnt++; // !TheColor能走的类型数量+1
 							bool state = canWin(TheColor);
-							if (state) {
+							if (state)
+							{
 								// TheColor能吃掉!TheColor的将,则!TheColor不能走这一步,继续判断下一步
-								j->restore(originPos, nxtPos, nxtChess);
+								orignChess->restore(originPos, nxtPos, nxtChess);
 							}
-							else {
+							else
+							{
 								// TheColor不能吃掉!TheColor的将,则!TheColor能走这一步,直接return false
-								j->restore(originPos, nxtPos, nxtChess);
+								orignChess->restore(originPos, nxtPos, nxtChess);
 								return false;
 							}
 						}
@@ -258,9 +275,9 @@ bool gameOver(player TheColor) {
 			}
 		}
 	}
-	if (cnt == 0) 
+	if (cnt == 0)
 		return true;
-	else 
+	else
 		return false;
 }
 

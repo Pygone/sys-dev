@@ -124,3 +124,4 @@ extern Chess* chessBoard[10][9];
 extern void initChessBoard(player player_);
 extern Status checkResult();
 bool gameOver(player TheColor); // TheColor是否必赢
+bool canWin(player TheColor);
