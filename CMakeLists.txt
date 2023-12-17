@@ -1,8 +1,8 @@
 project(chess)
 cmake_minimum_required(VERSION 3.16)
 
-set(CMAKE_C_COMPILER /home/pygone/data/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc)
-set(CMAKE_CXX_COMPILER /home/pygone/data/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++)
+set(CMAKE_C_COMPILER /home/wyxm/EmbeddedSystems/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc)
+set(CMAKE_CXX_COMPILER /home/wyxm/EmbeddedSystems/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-g++)
 
 set(CMAKE_C_FLAGS "-Wall -O2")
 set(CMAKE_EXE_LINKER_FLAGS "-Wall")
@@ -17,3 +17,5 @@ add_subdirectory(common)
 add_subdirectory(src)
 add_executable(chess main.cpp)
 target_link_libraries(chess chess_lib)
+add_executable(test test.cpp)
+target_link_libraries(test chess_lib)
