@@ -162,6 +162,8 @@ bool ChessBing::move(const Position& pos)
 {
 	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
 	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
+	if (pos.x < pos_.x) return false;
+	if (pos.x == pos_.x && pos_.x <= 4) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
