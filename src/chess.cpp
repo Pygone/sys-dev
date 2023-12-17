@@ -187,14 +187,24 @@ void Chess::setChessColor(player player)
 Status checkResult()
 {
 	bool red = false, black = false;
-	for (auto& i : chessBoard)
+	for (int i = 0; i <= 2; ++i)
 	{
-		for (auto& j : i)
+		for (int j = 3; j <= 5; ++j)
 		{
-			if (j != nullptr && j->getChessType() == chessType::jiang)
+			if (chessBoard[i][j] != nullptr && chessBoard[i][j]->getChessType() == chessType::jiang)
 			{
-				if (j->getChessColor() == player::red) red = true;
-				else black = true;
+				if (chessBoard[i][j]->getChessColor() == player::red) red = true;
+			}
+		}
+	}
+
+	for (int i = 7; i <= 9; ++i)
+	{
+		for (int j = 3; j <= 5; ++j)
+		{
+			if (chessBoard[i][j] != nullptr && chessBoard[i][j]->getChessType() == chessType::jiang)
+			{
+				if (chessBoard[i][j]->getChessColor() == player::black) black = true;
 			}
 		}
 	}

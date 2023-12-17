@@ -320,12 +320,14 @@ void Controller::handleMessage(int fd)
 		{
 			printf("to choose\n");
 			current_state = choose_side;
+			task_delete_timer(500);
 			draw_match_win();
 		}
 		else if (status == pairStatus::to_wait)
 		{
 			printf("to wait\n");
 			current_state = wait;
+			task_delete_timer(500);
 			draw_match_lose();
 		}
 		else
@@ -469,7 +471,7 @@ void Controller::handleTouch(int fd)
 		{
 			// draw_pairing();// TODO: draw pairing
 			printf("pairing\n");
-			draw_match();
+			task_add_timer(500, pair_stage);
 			current_state = pairing;
 			whoFirst(bluetooth_fd);
 		}
