@@ -3,9 +3,12 @@
 //
 
 #include "chess.h"
+
+#include <unordered_map>
+
 #include "moveTrial.h"
 Chess* chessBoard[10][9];
-
+std::unordered_map<player, Chess*> playerMap;
 void initChessBoard(player player_)
 {
 	player other = player_ == player::red ? player::black : player::red;
@@ -16,6 +19,7 @@ void initChessBoard(player player_)
 	chessBoard[0][2] = new ChessXiang(player_, { 0, 2 });
 	chessBoard[0][3] = new ChessShi(player_, { 0, 3 });
 	chessBoard[0][4] = new ChessJiang(player_, { 0, 4 });
+	playerMap[player_] = chessBoard[0][4];
 	chessBoard[0][5] = new ChessShi(player_, { 0, 5 });
 	chessBoard[0][6] = new ChessXiang(player_, { 0, 6 });
 	chessBoard[0][7] = new ChessMa(player_, { 0, 7 });
@@ -32,6 +36,7 @@ void initChessBoard(player player_)
 	chessBoard[9][2] = new ChessXiang(other, { 9, 2 });
 	chessBoard[9][3] = new ChessShi(other, { 9, 3 });
 	chessBoard[9][4] = new ChessJiang(other, { 9, 4 });
+	playerMap[other] = chessBoard[9][4];
 	chessBoard[9][5] = new ChessShi(other, { 9, 5 });
 	chessBoard[9][6] = new ChessXiang(other, { 9, 6 });
 	chessBoard[9][7] = new ChessMa(other, { 9, 7 });
@@ -70,18 +75,9 @@ bool canWin(player TheColor)
 	// 判断当前棋局TheColor能否一步吃掉!TheColor的将
 	Position otherJiangPos{};
 	Chess* otherJiang = nullptr;
-	for (auto& i : chessBoard)
-	{
-		for (auto& j : i)
-		{
-			if (j != nullptr && j->getChessType() == chessType::jiang && j->getChessColor() != TheColor)
-			{
-				otherJiangPos = j->pos_;
-				otherJiang = j; // 保存
-				break;
-			}
-		}
-	}
+	player otherColor = TheColor == player::red ? player::black : player::red;
+	otherJiang = playerMap[otherColor];
+	otherJiangPos = otherJiang->pos_;
 	// 遍历所有自己的棋子,只要有一个棋子能吃掉对方将,则return true
 	for (auto& i : chessBoard)
 	{
@@ -90,7 +86,7 @@ bool canWin(player TheColor)
 			if (j != nullptr && j->getChessColor() == TheColor)
 			{
 				Chess* orignChess = chessBoard[j->pos_.x][j->pos_.y];
-				Position originPos = j->pos_;
+				const Position& originPos = j->pos_;
 				if (move(originPos, otherJiangPos))
 				{
 					restore(orignChess, originPos, otherJiangPos, otherJiang);
