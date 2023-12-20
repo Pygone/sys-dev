@@ -4,8 +4,10 @@
 #pragma once
 
 #include <cmath>
+#include <unordered_map>
 
 #include "chess.h"
+extern std::unordered_map<player, Chess*> playerMap;
 extern player player_;
 bool move(const Position& pre_pos, const Position& pos);
 bool restore(Chess* chess, Position originPos, Position nxtPos, Chess* nxtChess);

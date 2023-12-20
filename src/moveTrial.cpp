@@ -5,6 +5,30 @@
 
 #include <algorithm>
 player player_;
+void movement(const Position& pre_pos, const Position& pos)
+{
+	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
+	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
+	chessBoard[pos.x][pos.y]->pos_ = pos;
+}
+bool check_jiang_condition()
+{
+	Chess* shuai = playerMap[red];
+	Chess* jiang = playerMap[black];
+	if (jiang->pos_.y == shuai->pos_.y)
+	{
+		int y = jiang->pos_.y;
+		int min_x = std::min(shuai->pos_.x, jiang->pos_.x);
+		int max_x = std::max(shuai->pos_.x, jiang->pos_.x);
+		bool flag = false;
+		for (int i = min_x + 1; i < max_x; ++i)
+		{
+			if (chessBoard[i][y] != nullptr) flag = true;
+		}
+		if (!flag) return false;
+	}
+	return true;
+}
 bool move(const Position& pre_pos, const Position& pos)
 
 {
@@ -13,16 +37,38 @@ bool move(const Position& pre_pos, const Position& pos)
 		pos.y]->getChessColor())
 		return false;
 	chessType type = chessBoard[pre_pos.x][pre_pos.y]->getChessType();
+	Chess* orignChess = chessBoard[pre_pos.x][pre_pos.y];
+	Chess* nxtChess = chessBoard[pos.x][pos.y];
+	bool res = false;
 	switch (type)
 	{
-	case chessType::bing: return move_bing(pre_pos, pos);
-	case chessType::jiang: return move_jiang(pre_pos, pos);
-	case chessType::ma: return move_ma(pre_pos, pos);
-	case chessType::pao: return move_pao(pre_pos, pos);
-	case chessType::shi: return move_shi(pre_pos, pos);
-	case chessType::xiang: return move_xiang(pre_pos, pos);
-	case chessType::ju: return move_ju(pre_pos, pos);
+	case chessType::bing: res = move_bing(pre_pos, pos);
+		break;
+	case chessType::jiang: res = move_jiang(pre_pos, pos);
+        break;
+	case chessType::ma: res = move_ma(pre_pos, pos);
+        break;
+	case chessType::pao: res = move_pao(pre_pos, pos);
+        break;
+	case chessType::shi: res = move_shi(pre_pos, pos);
+        break;
+	case chessType::xiang: res = move_xiang(pre_pos, pos);
+        break;
+	case chessType::ju: res = move_ju(pre_pos, pos);
+        break;
 	}
+	if (res)
+    {
+        if (!check_jiang_condition())
+        {
+            restore(orignChess, pre_pos, pos, nxtChess);
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 	return false;
 }
 bool restore(Chess* chess, Position originPos, Position nxtPos, Chess* nxtChess)
@@ -44,9 +90,7 @@ bool move_jiang(const Position& pre_pos, const Position& pos)
 		if (pos.x > 9 || pos.x < 7 || pos.y < 3 || pos.y > 5) return false;
 	}
 	if (abs(pos.x - pre_pos.x) + abs(pos.y - pre_pos.y) != 1) return false;
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
 bool move_shi(const Position& pre_pos, const Position& pos)
@@ -61,9 +105,7 @@ bool move_shi(const Position& pre_pos, const Position& pos)
 		if (pos.x > 9 || pos.x < 7 || pos.y < 3 || pos.y > 5) return false;
 	}
 	if (abs(pos.x - pre_pos.x) != 1 || abs(pos.y - pre_pos.y) != 1) return false;
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
 bool move_xiang(const Position& pre_pos, const Position& pos)
@@ -79,9 +121,7 @@ bool move_xiang(const Position& pre_pos, const Position& pos)
 	}
 	if (abs(pos.x - pre_pos.x) != 2 || abs(pos.y - pre_pos.y) != 2) return false;
 	if (chessBoard[(pos.x + pre_pos.x) / 2][(pos.y + pre_pos.y) / 2] != nullptr) return false;
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
 bool move_ma(const Position& pre_pos, const Position& pos)
@@ -96,9 +136,7 @@ bool move_ma(const Position& pre_pos, const Position& pos)
 	{
 		if (chessBoard[pre_pos.x][(pos.y + pre_pos.y) / 2] != nullptr) return false;
 	}
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
 
@@ -124,9 +162,7 @@ bool move_ju(const Position& pre_pos, const Position& pos)
 			if (chessBoard[i][pos.y] != nullptr) return false;
 		}
 	}
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
 
@@ -156,9 +192,7 @@ bool move_pao(const Position& pre_pos, const Position& pos)
 		}
 		if (cnt > 1) return false;
 	}
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
 
@@ -176,8 +210,6 @@ bool move_bing(const Position& pre_pos, const Position& pos)
 		if (pre_pos.x - pos.x != 1) return false;
 	}
 	if (abs(pos.y - pre_pos.y) != 1) return false;
-	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
-	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
-	chessBoard[pos.x][pos.y]->pos_ = pos;
+	movement(pre_pos, pos);
 	return true;
 }
