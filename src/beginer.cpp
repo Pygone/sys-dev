@@ -32,7 +32,7 @@ pairStatus whoFirst(int fd)
 	if (send_or_recv && rand_num == -1)
 	{
 
-		rand_num = myTime() % 10;
+		rand_num = task_get_time() % 10;
 		memset(Buffer, 0, sizeof(Buffer));
 		printf("send :%d\n", rand_num);
 		sprintf(Buffer, "%d", rand_num);

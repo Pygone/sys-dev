@@ -348,6 +348,7 @@ void Controller::handleMessage(int fd)
 		int n = 0;
 		printf("wait\n");
 		n = myRead_nonblock(fd, message.getMessage(), 100);
+		printf("message: %s\n", message.getMessage());
 		if (n <= 0)
 		{
 			printf("close bluetooth tty fd\n");
@@ -455,7 +456,7 @@ void Controller::handleTouch(int fd)
 		else if (status == touch_result::choose_red)
 		{
 			printf("your side is red\n");
-			myWrite_nonblock(bluetooth_fd, (void*)"1", 100);
+			myWrite_nonblock(bluetooth_fd, (void*)"2", 100);
 			myColor = player::red;
 			initChessBoard(myColor);
 			initChess();
@@ -465,7 +466,7 @@ void Controller::handleTouch(int fd)
 		else if (status == touch_result::choose_black)
 		{
 			printf("your side is black\n");
-			myWrite_nonblock(bluetooth_fd, (void*)"2", 100);
+			myWrite_nonblock(bluetooth_fd, (void*)"1", 100);
 			myColor = player::black;
 			initChessBoard(myColor);
 			initChess();
