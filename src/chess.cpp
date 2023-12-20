@@ -277,10 +277,7 @@ bool gameOver(player TheColor)
 			}
 		}
 	}
-	if (cnt == 0)
-		return true;
-	else
-		return false;
+	return true;
 }
 
 Status checkResult()
