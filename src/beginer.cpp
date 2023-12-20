@@ -16,9 +16,8 @@ pairStatus whoFirst(int fd)
 {
 	if (!send_or_recv && num == -1)
 	{
-		printf("recv\n");
 		int ret = myRead_nonblock(fd, Buffer, 1024);
-		printf("Buffer :%s", Buffer);
+		printf("recv :%s\n", Buffer);
 		if (ret > 0)
 		{
 			sscanf(Buffer, "%d", &num);
@@ -32,8 +31,8 @@ pairStatus whoFirst(int fd)
 	}
 	if (send_or_recv && rand_num == -1)
 	{
-		printf("send\n");
-		rand_num = rand() % 2;
+		rand_num = rand() % 10;
+		printf("send :%d\n", rand_num);
 		sprintf(Buffer, "%d", rand_num);
 		myWrite_nonblock(fd, Buffer, strlen(Buffer));
 		send_or_recv = false;
