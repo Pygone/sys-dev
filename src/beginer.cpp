@@ -20,7 +20,7 @@ pairStatus whoFirst(int fd)
 		printf("recv :%s\n", Buffer);
 		if (ret > 0)
 		{
-			sscanf(Buffer, "%d", &num);
+			num = Buffer[strlen(Buffer) - 1] - '0';
 			send_or_recv = true;
 		}
 		else
@@ -31,7 +31,9 @@ pairStatus whoFirst(int fd)
 	}
 	if (send_or_recv && rand_num == -1)
 	{
-		rand_num = rand() % 10;
+
+		rand_num = myTime() % 10;
+		memset(Buffer, 0, sizeof(Buffer));
 		printf("send :%d\n", rand_num);
 		sprintf(Buffer, "%d", rand_num);
 		myWrite_nonblock(fd, Buffer, strlen(Buffer));
