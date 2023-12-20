@@ -401,7 +401,9 @@ void Controller::handleMessage(int fd)
 		printChess();
 		fb_update();
 		player otherColor = myColor == player::red ? player::black : player::red;
+		printf("over check ");
 		bool isOtherWin = gameOver(otherColor);
+		printf("check done");
 		if (isOtherWin)
 		{
 			// 对方必赢
