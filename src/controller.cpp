@@ -190,6 +190,7 @@ bool Controller::do_queren()
 		else
 		{
 			player otherColor = myColor == player::red ? player::black : player::red;
+			printf("if can win check\n");
 			if (canWin(otherColor))
 			{
 				orignChess->restore(pre_pos, nxt_pos, nxtChess);
@@ -418,6 +419,8 @@ void Controller::handleTouch(int fd)
 		getYourTurn()))
 	{
 		if (current_state == over)exit(1);
+		int type, x, y, finger;
+		type = touch_read(fd, &x, &y, &finger);
 		return;
 	}
 	int type, x, y, finger;
