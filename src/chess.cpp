@@ -3,11 +3,7 @@
 //
 
 #include "chess.h"
-#include "show.h"
-
-#include <cmath>
-#include <cstdio>
-#include <iostream>
+#include "moveTrial.h"
 Chess* chessBoard[10][9];
 
 void initChessBoard(player player_)
@@ -48,128 +44,6 @@ void initChessBoard(player player_)
 	chessBoard[6][6] = new ChessBing(other, { 6, 6 });
 	chessBoard[6][8] = new ChessBing(other, { 6, 8 });
 }
-bool ChessJiang::move(const Position& pos)
-{
-	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
-	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-bool ChessShi::move(const Position& pos)
-{
-	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
-	if (abs(pos.x - pos_.x) != 1 || abs(pos.y - pos_.y) != 1) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-bool ChessXiang::move(const Position& pos)
-{
-	if (pos.x > 5 || pos.x < 0 || pos.y < 0 || pos.y > 8) return false;
-	if (abs(pos.x - pos_.x) != 2 || abs(pos.y - pos_.y) != 2) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	if (chessBoard[(pos.x + pos_.x) / 2][(pos.y + pos_.y) / 2] != nullptr) return false;
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-bool ChessMa::move(const Position& pos)
-{
-	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
-	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 3) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	if (abs(pos.x - pos_.x) == 2)
-	{
-		if (chessBoard[(pos.x + pos_.x) / 2][pos_.y] != nullptr) return false;
-	}
-	else
-	{
-		if (chessBoard[pos_.x][(pos.y + pos_.y) / 2] != nullptr) return false;
-	}
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-bool ChessJu::move(const Position& pos)
-{
-	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
-	if (pos.x != pos_.x && pos.y != pos_.y) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	if (pos.x == pos_.x)
-	{
-		int min = pos_.y < pos.y ? pos_.y : pos.y;
-		int max = pos_.y > pos.y ? pos_.y : pos.y;
-		for (int i = min + 1; i < max; i++)
-		{
-			if (chessBoard[pos.x][i] != nullptr) return false;
-		}
-	}
-	else
-	{
-		int min = pos_.x < pos.x ? pos_.x : pos.x;
-		int max = pos_.x > pos.x ? pos_.x : pos.x;
-		for (int i = min + 1; i < max; i++)
-		{
-			if (chessBoard[i][pos.y] != nullptr) return false;
-		}
-	}
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-bool ChessPao::move(const Position& pos)
-{
-	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
-	if (pos.x != pos_.x && pos.y != pos_.y) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	if (pos.x == pos_.x)
-	{
-		int min = pos_.y < pos.y ? pos_.y : pos.y;
-		int max = pos_.y > pos.y ? pos_.y : pos.y;
-		int count = 0;
-		for (int i = min + 1; i < max; i++)
-		{
-			if (chessBoard[pos.x][i] != nullptr) count++;
-		}
-		if (count > 1) return false;
-	}
-	else
-	{
-		int min = pos_.x < pos.x ? pos_.x : pos.x;
-		int max = pos_.x > pos.x ? pos_.x : pos.x;
-		int count = 0;
-		for (int i = min + 1; i < max; i++)
-		{
-			if (chessBoard[i][pos.y] != nullptr) count++;
-		}
-		if (count > 1) return false;
-	}
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-bool ChessBing::move(const Position& pos)
-{
-	if (pos.x < 0 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
-	if (abs(pos.x - pos_.x) + abs(pos.y - pos_.y) != 1) return false;
-	if (pos.x < pos_.x) return false;
-	if (pos.x == pos_.x && pos_.x <= 4) return false;
-	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	chessBoard[pos.x][pos.y] = this;
-	chessBoard[pos_.x][pos_.y] = nullptr;
-	pos_ = pos;
-	return true;
-}
-
 chessType Chess::getChessType() const
 {
 	return type_;
@@ -185,12 +59,6 @@ player Chess::getChessColor() const
 void Chess::setChessColor(player player)
 {
 	player_ = player;
-}
-void Chess::restore(const Position& originPos, const Position& nxtPos, Chess* nxtChess)
-{
-	chessBoard[originPos.x][originPos.y] = this;
-	chessBoard[nxtPos.x][nxtPos.y] = nxtChess;
-	pos_ = originPos;
 }
 
 /**
@@ -223,9 +91,9 @@ bool canWin(player TheColor)
 			{
 				Chess* orignChess = chessBoard[j->pos_.x][j->pos_.y];
 				Position originPos = j->pos_;
-				if (j->move(otherJiangPos))
+				if (move(originPos, otherJiangPos))
 				{
-					orignChess->restore(originPos, otherJiangPos, otherJiang);
+					restore(orignChess, originPos, otherJiangPos, otherJiang);
 					return true;
 				}
 			}
@@ -255,24 +123,19 @@ bool gameOver(player TheColor)
 						Position nxtPos = { x, y };
 						Chess* orignChess = chessBoard[originPos.x][originPos.y];
 						Chess* nxtChess = chessBoard[x][y];
-						if (j->move(nxtPos)) // TODO: 这里有问题, 如果是要移动别人的棋子, 会发生都移动不了
+						if (move(originPos, nxtPos)) // TODO: 这里有问题, 如果是要移动别人的棋子, 会发生都移动不了
 						{
 							cnt++; // !TheColor能走的类型数量+1
 							bool state = canWin(TheColor);
 							if (state)
 							{
 								// TheColor能吃掉!TheColor的将,则!TheColor不能走这一步,继续判断下一步
-								orignChess->restore(originPos, nxtPos, nxtChess);
+								restore(orignChess, originPos, nxtPos, nxtChess);
 							}
 							else
 							{
 								// TheColor不能吃掉!TheColor的将,则!TheColor能走这一步,直接return false
-								orignChess->restore(originPos, nxtPos, nxtChess);
-								printf("why cant win orignPos:(%d,%d) nxtPos:(%d,%d)\n",
-									originPos.x,
-									originPos.y,
-									nxtPos.x,
-									nxtPos.y);
+								restore(orignChess, originPos, nxtPos, nxtChess);
 								return false;
 							}
 						}
@@ -282,34 +145,4 @@ bool gameOver(player TheColor)
 		}
 	}
 	return true;
-}
-
-Status checkResult()
-{
-	bool red = false, black = false;
-	for (int i = 0; i <= 2; ++i)
-	{
-		for (int j = 3; j <= 5; ++j)
-		{
-			if (chessBoard[i][j] != nullptr && chessBoard[i][j]->getChessType() == chessType::jiang)
-			{
-				if (chessBoard[i][j]->getChessColor() == player::red) red = true;
-			}
-		}
-	}
-
-	for (int i = 7; i <= 9; ++i)
-	{
-		for (int j = 3; j <= 5; ++j)
-		{
-			if (chessBoard[i][j] != nullptr && chessBoard[i][j]->getChessType() == chessType::jiang)
-			{
-				if (chessBoard[i][j]->getChessColor() == player::black) black = true;
-			}
-		}
-	}
-	if (red && black) return Status::playing;
-	else if (red) return Status::redWin;
-	else if (black) return Status::blackWin;
-	else return Status::playing;
 }

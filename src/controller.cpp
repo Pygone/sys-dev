@@ -5,8 +5,7 @@
 #include "controller.h"
 
 #include "beginer.h"
-const char* win_c = "win";
-const char* lose_c = "lose";
+#include "moveTrial.h"
 
 extern "C" {
 #include "../common/common.h"
@@ -180,11 +179,10 @@ bool Controller::do_queren()
 	{
 		Chess* orignChess = chessBoard[pre_pos.x][pre_pos.y];
 		Chess* nxtChess = chessBoard[nxt_pos.x][nxt_pos.y];
-		if (!chessBoard[pre_pos.x][pre_pos.y]->move(nxt_pos))
+		if (!move(pre_pos,nxt_pos))
 		{
 			printChess();
 			draw_message_prompt("Invalid move!");
-			fb_update();
 			return false;
 		}
 		else
@@ -193,7 +191,7 @@ bool Controller::do_queren()
 			printf("if can win check\n");
 			if (canWin(otherColor))
 			{
-				orignChess->restore(pre_pos, nxt_pos, nxtChess);
+				restore(orignChess, pre_pos, nxt_pos, nxtChess);
 				printChess();
 				draw_message_prompt("invalid move cause game over!");
 				return false;
@@ -466,6 +464,7 @@ void Controller::handleTouch(int fd)
 			printf("your side is red\n");
 			myWrite_nonblock(bluetooth_fd, (void*)"2", 100);
 			myColor = player::red;
+			::player_ = player::red;
 			initChessBoard(myColor);
 			initChess();
 			current_state = playing;
@@ -476,6 +475,7 @@ void Controller::handleTouch(int fd)
 			printf("your side is black\n");
 			myWrite_nonblock(bluetooth_fd, (void*)"1", 100);
 			myColor = player::black;
+			::player_ = player::black;
 			initChessBoard(myColor);
 			initChess();
 			current_state = playing;
