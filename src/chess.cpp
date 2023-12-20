@@ -63,7 +63,6 @@ bool ChessShi::move(const Position& pos)
 	if (pos.x > 3 || pos.x < 0 || pos.y < 3 || pos.y > 5) return false;
 	if (abs(pos.x - pos_.x) != 1 || abs(pos.y - pos_.y) != 1) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pos.x][pos.y]->getChessColor() == player_) return false;
-	delete chessBoard[pos.x][pos.y];
 	chessBoard[pos.x][pos.y] = this;
 	chessBoard[pos_.x][pos_.y] = nullptr;
 	pos_ = pos;
@@ -256,7 +255,7 @@ bool gameOver(player TheColor)
 						Position nxtPos = { x, y };
 						Chess* orignChess = chessBoard[originPos.x][originPos.y];
 						Chess* nxtChess = chessBoard[x][y];
-						if (j->move(nxtPos))
+						if (j->move(nxtPos)) // TODO: 这里有问题, 如果是要移动别人的棋子, 会发生都移动不了
 						{
 							cnt++; // !TheColor能走的类型数量+1
 							bool state = canWin(TheColor);
@@ -269,6 +268,11 @@ bool gameOver(player TheColor)
 							{
 								// TheColor不能吃掉!TheColor的将,则!TheColor能走这一步,直接return false
 								orignChess->restore(originPos, nxtPos, nxtChess);
+								printf("why cant win orignPos:(%d,%d) nxtPos:(%d,%d)\n",
+									originPos.x,
+									originPos.y,
+									nxtPos.x,
+									nxtPos.y);
 								return false;
 							}
 						}

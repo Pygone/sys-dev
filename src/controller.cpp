@@ -201,6 +201,8 @@ bool Controller::do_queren()
 			printf("success move\n");
 			printChess();
 			draw_message_prompt("");
+			hasChoose = false;
+			hasLanding = false;
 			return true;
 		}
 	}
@@ -377,7 +379,7 @@ void Controller::handleMessage(int fd)
 	{
 		int n = 0;
 		if (getYourTurn()) return;
-		setTurnOn();
+
 		n = myRead_nonblock(fd, message.getMessage(), 100);
 
 		if (n <= 0)
@@ -404,13 +406,14 @@ void Controller::handleMessage(int fd)
 		player otherColor = myColor == player::red ? player::black : player::red;
 		printf("over check ");
 		bool isOtherWin = gameOver(otherColor);
-		printf("check done");
 		if (isOtherWin)
 		{
 			// 对方必赢
 			draw_lose();
 			setOver();
 		}
+		printf("check done");
+		setTurnOn();
 	}
 }
 void Controller::handleTouch(int fd)
