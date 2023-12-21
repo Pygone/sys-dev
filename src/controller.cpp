@@ -111,7 +111,7 @@ void Controller::do_chess(int touch_x, int touch_y)
 	Position pos = posMap[{ touch_x, touch_y }];
 	if (!hasChoose && chessBoard[pos.x][pos.y] == nullptr)
 	{
-		draw_message_prompt("No chess here!");
+		draw_message_prompt("此处没有棋子");
 	}
 	else
 	{
@@ -140,7 +140,9 @@ void Controller::do_chess(int touch_x, int touch_y)
 				draw_landing_point(pos);
 				hasLanding = true;
 				nxt_pos = pos;
+				// printf("landing over before fb_update\n");
 				fb_update();
+				// printf("landing over behind fb_update\n");
 			}
 		}
 		else
@@ -150,7 +152,9 @@ void Controller::do_chess(int touch_x, int touch_y)
 				printf("choose\n");
 				// 选中棋子 & 绘制选中的棋子
 				draw_message_prompt("");
+				// printf("choose over before printChess\n");
 				printChess();
+				// printf("choose over behind printChess\n");
 				draw_choose(pos, chessBoard[pos.x][pos.y]->getChessType(), chessBoard[pos.x][pos.y]->getChessColor());
 				hasChoose = true;
 				pre_pos = pos;
@@ -158,7 +162,7 @@ void Controller::do_chess(int touch_x, int touch_y)
 			}
 			else
 			{
-				draw_message_prompt("Not your chess!");
+				draw_message_prompt("此处不是你的棋子");
 			}
 		}
 	}
@@ -167,6 +171,7 @@ void Controller::do_chess(int touch_x, int touch_y)
 void Controller::do_quxiao()
 {
 	// 貌似不需要取消键
+	printf("click quxiao\n");
 	hasChoose = false;
 	hasLanding = false;
 	printChess();
@@ -175,6 +180,7 @@ void Controller::do_quxiao()
 
 bool Controller::do_queren()
 {
+	printf("click queren\n");
 	if (hasChoose && hasLanding)
 	{
 		Chess* orignChess = chessBoard[pre_pos.x][pre_pos.y];
@@ -182,18 +188,23 @@ bool Controller::do_queren()
 		if (!move(pre_pos,nxt_pos))
 		{
 			printChess();
-			draw_message_prompt("Invalid move!");
+			draw_message_prompt("非法移动");
+			hasChoose = false;
+			hasLanding = false;
 			return false;
 		}
 		else
 		{
 			player otherColor = myColor == player::red ? player::black : player::red;
-			printf("if can win check\n");
+			printf("queren: check if move cause game over!\n");
 			if (canWin(otherColor))
 			{
 				restore(orignChess, pre_pos, nxt_pos, nxtChess);
 				printChess();
-				draw_message_prompt("invalid move cause game over!");
+				hasChoose = false;
+				hasLanding = false;
+				draw_message_prompt("此步导致对方必赢");
+				printf("unsucess move\n");
 				return false;
 			}
 			printf("success move\n");
@@ -208,11 +219,11 @@ bool Controller::do_queren()
 	{
 		if (!hasChoose)
 		{
-			draw_message_prompt("Please choose a chess!");
+			draw_message_prompt("请选择棋子");
 		}
 		else if (!hasLanding)
 		{
-			draw_message_prompt("No landing point!");
+			draw_message_prompt("请选择落点");
 		}
 		hasChoose = false;
 		hasLanding = false;
@@ -220,19 +231,19 @@ bool Controller::do_queren()
 	}
 }
 
-char* Controller::do_touxiang()
+bool Controller::do_touxiang()
 {
 	touxiangCnt++;
 	if (touxiangCnt == 1)
 	{
-		draw_message_prompt("surrender?");
+		draw_message_prompt("是否认输");
 		fb_update();
-		return NULL;
+		return false;
 	}
 	else if (touxiangCnt == 2)
 	{
 		current_state = over;
-		return "touxiang";
+		return true;
 	}
 }
 
@@ -267,19 +278,25 @@ touch_result Controller::do_touch(int touch_x, int touch_y)
 				break;
 			}
 			case touxiang:
-				return touch_result::touxiang;
+			{
+				bool res = do_touxiang();
+				if (res)
+					return touch_result::touxiang;
+				else 
+					return touch_result::invalid;
 				break;
+			}
 			}
 			break;
 		case invalid:
 			printChess();
-			draw_message_prompt("Invalid touch!");
+			draw_message_prompt("非法触碰");
 			break;
 		}
 	}
 	else if (current_state == over)
 	{
-		printf("quit\n");
+		printf("when state is over, click the screen --------> process quit\n");
 		fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
 		fb_update();
 		exit(0); // 进入over模式 按击任意位置退出
@@ -361,13 +378,19 @@ void Controller::handleMessage(int fd)
 		{
 			printf("your side is red\n");
 			myColor = player::red;
+			::player_ = player::red;
 			setTurnOn();
+			// int turn_color = myColor == player::red ? COLOR_RED : COLOR_BLACK;
+			// draw_your_turn(turn_color);
 		}
 		else
 		{
 			printf("your side is black\n");
 			myColor = player::black;
+			::player_ = player::black;
 			setTurnOff();
+			// int turn_color = myColor != player::red ? COLOR_RED : COLOR_BLACK;
+			// draw_other_turn(turn_color);
 		}
 		current_state = playing;
 		initChessBoard(myColor);
@@ -400,9 +423,10 @@ void Controller::handleMessage(int fd)
 		}
 		message.Deserialize();
 		printChess();
+		// printChessCmd(); // TODO:remove this line
 		fb_update();
 		player otherColor = myColor == player::red ? player::black : player::red;
-		printf("over check ");
+		printf("when bluetooth get message, start check\n");
 		bool isOtherWin = gameOver(otherColor);
 		if (isOtherWin)
 		{
@@ -410,22 +434,39 @@ void Controller::handleMessage(int fd)
 			draw_lose();
 			setOver();
 		}
-		printf("check done");
+		printf("when bluetooth get message, check done\n");
+		// printChessCmd(); // TODO:remove this line
 		setTurnOn();
+		draw_message_prompt("轮到你的回合");
+		// int turn_color = myColor == player::red ? COLOR_RED : COLOR_BLACK;
+		// draw_your_turn(turn_color);
 	}
 }
+
 void Controller::handleTouch(int fd)
 {
 	if (current_state == wait || current_state == over || current_state == pairing || (current_state == playing && !
 		getYourTurn()))
 	{
-		if (current_state == over)exit(1);
+		// if (current_state == playing && !getYourTurn())
+		// 	draw_message_prompt("不是你的回合");
+		if (current_state == over) {
+			printf("when state is over, click the screen --------> process quit\n");
+			// fb_draw_rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, COLOR_BLACK);
+			fb_update();
+			exit(0); // 进入over模式 按击任意位置退出
+		}
 		int type, x, y, finger;
 		type = touch_read(fd, &x, &y, &finger);
 		return;
 	}
 	int type, x, y, finger;
 	type = touch_read(fd, &x, &y, &finger);
+	// TODO:test
+	if (finger != 0)
+	{
+		return; // 只响应单指触摸
+	}
 	switch (type)
 	{
 	case TOUCH_PRESS:
@@ -433,17 +474,25 @@ void Controller::handleTouch(int fd)
 		touch_result status = do_touch(x, y);
 		if (status == touch_result::move_chess)
 		{
-			printf("move chess\n");
+			// printf("move chess\n");  // 已经有success move的提示了
 			myWrite_nonblock(bluetooth_fd, message.getMessage(), 100);
 			setTurnOff();
+			// int turn_color = myColor != player::red ? COLOR_RED : COLOR_BLACK;
+			// draw_other_turn(turn_color);
+			printf("when touch event I move chess, start check\n");
+			draw_message_prompt("回合结束");
 			bool isWin = gameOver(myColor);
-			printf("not over\n");
 			if (isWin)
 			{
 				// 我方必赢
 				draw_win();
 				setOver();
+				printf("when touch event I move chess, over: I win\n");
 			}
+			else {
+				printf("when touch event I move chess, not over\n");
+			}
+			printf("when touch event I move chess, check done\n");
 		}
 		else if (status == touch_result::touxiang)
 		{
@@ -454,6 +503,7 @@ void Controller::handleTouch(int fd)
 		else if (status == touch_result::begin)
 		{
 			// draw_pairing();// TODO: draw pairing
+			printf("click begin button:  begin ---> pair\n");
 			printf("pairing\n");
 			task_add_timer(500, pair_stage);
 			current_state = pairing;
@@ -462,6 +512,7 @@ void Controller::handleTouch(int fd)
 		else if (status == touch_result::choose_red)
 		{
 			printf("your side is red\n");
+			printf("click red button:  to_choose ---> playing\n");
 			myWrite_nonblock(bluetooth_fd, (void*)"2", 100);
 			myColor = player::red;
 			::player_ = player::red;
@@ -469,10 +520,13 @@ void Controller::handleTouch(int fd)
 			initChess();
 			current_state = playing;
 			setTurnOn();
+			// int turn_color = myColor == player::red ? COLOR_RED : COLOR_BLACK;
+			// draw_your_turn(turn_color);
 		}
 		else if (status == touch_result::choose_black)
 		{
 			printf("your side is black\n");
+			printf("click black button:  to_choose ---> playing\n");
 			myWrite_nonblock(bluetooth_fd, (void*)"1", 100);
 			myColor = player::black;
 			::player_ = player::black;
@@ -480,6 +534,8 @@ void Controller::handleTouch(int fd)
 			initChess();
 			current_state = playing;
 			setTurnOff();
+			// int turn_color = myColor != player::red ? COLOR_RED : COLOR_BLACK;
+			// draw_other_turn(turn_color);
 		}
 		else
 		{

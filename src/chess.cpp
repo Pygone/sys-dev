@@ -119,7 +119,7 @@ bool gameOver(player TheColor)
 						Position nxtPos = { x, y };
 						Chess* orignChess = chessBoard[originPos.x][originPos.y];
 						Chess* nxtChess = chessBoard[x][y];
-						if (move(originPos, nxtPos)) // TODO: 这里有问题, 如果是要移动别人的棋子, 会发生都移动不了
+						if (move(originPos, nxtPos))
 						{
 							cnt++; // !TheColor能走的类型数量+1
 							bool state = canWin(TheColor);

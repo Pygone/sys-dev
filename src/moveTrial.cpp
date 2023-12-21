@@ -5,12 +5,14 @@
 
 #include <algorithm>
 player player_;
+
 void movement(const Position& pre_pos, const Position& pos)
 {
 	chessBoard[pos.x][pos.y] = chessBoard[pre_pos.x][pre_pos.y];
 	chessBoard[pre_pos.x][pre_pos.y] = nullptr;
 	chessBoard[pos.x][pos.y]->pos_ = pos;
 }
+
 bool check_jiang_condition()
 {
 	Chess* shuai = playerMap[red];
@@ -29,8 +31,8 @@ bool check_jiang_condition()
 	}
 	return true;
 }
-bool move(const Position& pre_pos, const Position& pos)
 
+bool move(const Position& pre_pos, const Position& pos)
 {
 	if (chessBoard[pre_pos.x][pre_pos.y] == nullptr) return false;
 	if (chessBoard[pos.x][pos.y] != nullptr && chessBoard[pre_pos.x][pre_pos.y]->getChessColor() == chessBoard[pos.x][
@@ -71,6 +73,7 @@ bool move(const Position& pre_pos, const Position& pos)
     }
 	return false;
 }
+
 bool restore(Chess* chess, Position originPos, Position nxtPos, Chess* nxtChess)
 {
 	chessBoard[originPos.x][originPos.y] = chess;
@@ -78,6 +81,7 @@ bool restore(Chess* chess, Position originPos, Position nxtPos, Chess* nxtChess)
 	chess->pos_ = originPos;
 	return true;
 }
+
 bool move_jiang(const Position& pre_pos, const Position& pos)
 {
 	bool is_our_side = chessBoard[pre_pos.x][pre_pos.y]->getChessColor() == player_;
@@ -93,6 +97,7 @@ bool move_jiang(const Position& pre_pos, const Position& pos)
 	movement(pre_pos, pos);
 	return true;
 }
+
 bool move_shi(const Position& pre_pos, const Position& pos)
 {
 	bool is_our_side = chessBoard[pre_pos.x][pre_pos.y]->getChessColor() == player_;
@@ -108,6 +113,7 @@ bool move_shi(const Position& pre_pos, const Position& pos)
 	movement(pre_pos, pos);
 	return true;
 }
+
 bool move_xiang(const Position& pre_pos, const Position& pos)
 {
 	bool is_our_side = chessBoard[pre_pos.x][pre_pos.y]->getChessColor() == player_;
@@ -124,6 +130,7 @@ bool move_xiang(const Position& pre_pos, const Position& pos)
 	movement(pre_pos, pos);
 	return true;
 }
+
 bool move_ma(const Position& pre_pos, const Position& pos)
 {
 	if (pos.x > 9 || pos.x < 0 || pos.y < 0 || pos.y > 8) return false;
@@ -180,6 +187,8 @@ bool move_pao(const Position& pre_pos, const Position& pos)
 			if (chessBoard[pos.x][i] != nullptr) cnt++;
 		}
 		if (cnt > 1) return false;
+		if (chessBoard[pos.x][pos.y] == nullptr && cnt != 0) return false; // 落点为nullptr,则cnt必定为0
+		if (chessBoard[pos.x][pos.y] != nullptr && cnt == 0) return false; // 如果落点不为nullptr,则cnt必定为1
 	}
 	else
 	{
@@ -191,6 +200,8 @@ bool move_pao(const Position& pre_pos, const Position& pos)
 			if (chessBoard[i][pos.y] != nullptr) cnt++;
 		}
 		if (cnt > 1) return false;
+		if (chessBoard[pos.x][pos.y] == nullptr && cnt != 0) return false; // 落点为nullptr,则cnt必定为0
+		if (chessBoard[pos.x][pos.y] != nullptr && cnt == 0) return false; // 如果落点不为nullptr,则cnt必定为1
 	}
 	movement(pre_pos, pos);
 	return true;

@@ -78,18 +78,27 @@ static void draw_frames()
 	fb_draw_text(XBaseline - 100, 150, "消", 40, CHESS_FONT_COLOR, RIGHT);
 	fb_draw_text(XBaseline - 100, 270, "确", 40, CHESS_FONT_COLOR, RIGHT);
 	fb_draw_text(XBaseline - 100, 330, "定", 40, CHESS_FONT_COLOR, RIGHT);
-	fb_draw_text(XBaseline - 100, 450, "投", 40, CHESS_FONT_COLOR, RIGHT);
-	fb_draw_text(XBaseline - 100, 510, "降", 40, CHESS_FONT_COLOR, RIGHT);
+	fb_draw_text(XBaseline - 100, 450, "认", 40, CHESS_FONT_COLOR, RIGHT);
+	fb_draw_text(XBaseline - 100, 510, "输", 40, CHESS_FONT_COLOR, RIGHT);
 }
 
 static void draw_region()
 {
-	// fb_draw_rect(prompt_x, 20, 150, 560, COLOR_WHITE);
 	fb_draw_text(prompt_x + 130, 35, "消", 30, CHESS_FONT_COLOR, RIGHT);
 	fb_draw_text(prompt_x + 130, 65, "息", 30, CHESS_FONT_COLOR, RIGHT);
 	fb_draw_text(prompt_x + 130, 95, "提", 30, CHESS_FONT_COLOR, RIGHT);
 	fb_draw_text(prompt_x + 130, 125, "示", 30, CHESS_FONT_COLOR, RIGHT);
 	fb_draw_text(prompt_x + 130, 155, "区", 30, CHESS_FONT_COLOR, RIGHT);
+}
+
+void draw_your_turn(int color) {
+	fb_draw_text(prompt_x + 200, 200, "(我的回合)", 20, color, RIGHT);
+	fb_update();
+}
+
+void draw_other_turn(int color) {
+	fb_draw_text(prompt_x + 200, 200, "(对方回合)", 20, color, RIGHT);
+	fb_update();
 }
 
 void draw_message_prompt(char* msg)
