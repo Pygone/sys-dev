@@ -199,17 +199,32 @@ bool move_pao(const Position& pre_pos, const Position& pos)
 bool move_bing(const Position& pre_pos, const Position& pos)
 {
 	bool is_our_side = chessBoard[pre_pos.x][pre_pos.y]->getChessColor() == player_;
+	// 位置合法性判断
 	if (is_our_side)
 	{
 		if (pos.x < 0 || pos.x > 4 || pos.y < 0 || pos.y > 8) return false;
-		if (pos.x - pre_pos.x != 1) return false;
 	}
 	else
 	{
 		if (pos.x < 5 || pos.x > 9 || pos.y < 0 || pos.y > 8) return false;
-		if (pre_pos.x - pos.x != 1) return false;
 	}
-	if (abs(pos.y - pre_pos.y) != 1) return false;
+	// 移动合法性判断
+	if (abs(pre_pos.x - pos.x) + abs(pre_pos.y - pos.y) != 1) return false;
+	// 兵过河前后移动规则不同
+	if (is_our_side)
+	{
+		// 过河前只能往前
+		if (pre_pos.x < 5 && pos.x - pre_pos.x != 1) return false;
+		// 过河后只能往前或者左右
+		if (pre_pos.x >= 5 && pos.x - pre_pos.x == -1) return false;
+	}
+	else
+	{
+		// 过河前只能往前
+		if (pre_pos.x > 4 && pos.x - pre_pos.x != -1) return false;
+		// 过河后只能往前或者左右
+		if (pre_pos.x <= 4 && pos.x - pre_pos.x == 1) return false;
+	}
 	movement(pre_pos, pos);
 	return true;
 }

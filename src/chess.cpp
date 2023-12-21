@@ -86,7 +86,7 @@ bool canWin(player TheColor)
 			if (j != nullptr && j->getChessColor() == TheColor)
 			{
 				Chess* orignChess = chessBoard[j->pos_.x][j->pos_.y];
-				const Position& originPos = j->pos_;
+				Position originPos = j->pos_;
 				if (move(originPos, otherJiangPos))
 				{
 					restore(orignChess, originPos, otherJiangPos, otherJiang);
