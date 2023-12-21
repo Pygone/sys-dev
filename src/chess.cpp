@@ -5,6 +5,7 @@
 #include "chess.h"
 
 #include <unordered_map>
+#include <cstring>
 
 #include "moveTrial.h"
 Chess* chessBoard[10][9];
@@ -86,7 +87,7 @@ bool canWin(player TheColor)
 			if (j != nullptr && j->getChessColor() == TheColor)
 			{
 				Chess* orignChess = chessBoard[j->pos_.x][j->pos_.y];
-				const Position& originPos = j->pos_;
+				const Position originPos = j->pos_; // 引用 qwq
 				if (move(originPos, otherJiangPos))
 				{
 					restore(orignChess, originPos, otherJiangPos, otherJiang);
@@ -119,9 +120,11 @@ bool gameOver(player TheColor)
 						Position nxtPos = { x, y };
 						Chess* orignChess = chessBoard[originPos.x][originPos.y];
 						Chess* nxtChess = chessBoard[x][y];
-						if (move(originPos, nxtPos)) // TODO: 这里有问题, 如果是要移动别人的棋子, 会发生都移动不了
+						if (move(originPos, nxtPos))
 						{
 							cnt++; // !TheColor能走的类型数量+1
+							// printf("move and not restore\n");
+							// printChessCmd();
 							bool state = canWin(TheColor);
 							if (state)
 							{
@@ -130,10 +133,14 @@ bool gameOver(player TheColor)
 							}
 							else
 							{
+								// printf("origin_pos: %d %d nxt_pos: %d %d\n", originPos.x, originPos.y, nxtPos.x, nxtPos.y);
 								// TheColor不能吃掉!TheColor的将,则!TheColor能走这一步,直接return false
 								restore(orignChess, originPos, nxtPos, nxtChess);
+								// printf("%d\n",chessBoard[nxtPos.x][nxtPos.y]==nullptr);
 								return false;
 							}
+							// printf("move and restore\n");
+							// printChessCmd();
 						}
 					}
 				}
@@ -141,4 +148,44 @@ bool gameOver(player TheColor)
 		}
 	}
 	return true;
+}
+
+void printChessCmd() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 9; j++) {
+			if (chessBoard[i][j] == nullptr) {
+				printf("%-8s", " ");
+			}
+			else {
+				char chessBuf[100];
+				memset(chessBuf, '\0', sizeof(chessBuf));
+				switch (chessBoard[i][j]->getChessType())
+				{
+				case chessType::bing:
+					memcpy(chessBuf, "bing", sizeof("bing"));
+					break;
+				case chessType::jiang:
+					memcpy(chessBuf, "jiang", sizeof("jiang"));
+					break;
+				case chessType::ma:
+					memcpy(chessBuf, "ma", sizeof("ma"));
+					break;
+				case chessType::pao:
+					memcpy(chessBuf, "pao", sizeof("pao"));
+					break;
+				case chessType::shi:
+					memcpy(chessBuf, "shi", sizeof("shi"));
+					break;
+				case chessType::xiang:
+					memcpy(chessBuf, "xiang", sizeof("xiang"));
+					break;
+				case chessType::ju:
+					memcpy(chessBuf, "ju", sizeof("ju"));
+					break;
+				}
+				printf("%-8s", chessBuf);
+			}	
+		}
+		printf("\n");
+	}
 }

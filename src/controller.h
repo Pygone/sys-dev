@@ -85,5 +85,5 @@ class Controller
 		void do_chess(int touch_x, int touch_y);
 		void do_quxiao();
 		bool do_queren();
-		char* do_touxiang();
+		bool do_touxiang();
 };

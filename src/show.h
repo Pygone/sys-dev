@@ -24,6 +24,8 @@ void draw_begin(); // 开始界面
 void draw_match(int size); // 匹配界面
 void draw_match_win(); // 匹配win(即选边界面)
 void draw_match_lose(); // 匹配lose(即等待对方选边界面)
+void draw_your_turn(int color); // 轮到你了
+void draw_other_turn(int color); // 轮到对方了
 
 /*************用于被调用************/
 bool isClickBegin(int x, int y); // 是否按下开始按钮
